@@ -2,7 +2,7 @@
 // 2cK1XYfoKd3Fl3ZYysflTtbDA
 
 $.ajax({
-    url: "https://data.seattle.gov/resource/5src-czff.json?itemtype=acdvd",
+    url: "https://data.seattle.gov/resource/5src-czff.json?checkoutyear=2018",
     type: "GET",
     data: {
       "$limit" : 5000,
@@ -10,7 +10,48 @@ $.ajax({
     }
 }).done(function(data) {
   alert("Retrieved " + data.length + " records from the dataset!");
-  console.log(data);
+
+  //experiment
+  var subjectsList = [];
+  data.forEach(function(checkout) {
+    if (checkout.subjects != null) {
+      var temp = checkout.subjects.split(',');
+      temp.forEach(function(subject) {
+        // console.log("This is subjects list now", subjectsList);
+        // if (subjectsList[subject] != null) {
+        //   subjectsList[subject] += 1;
+        // } else {
+        //   subjectsList[subject] = 1;
+        // }
+        if(subject != null) {
+          subjectsList.push(subject);
+        }
+      });
+    }
+  });
+
+  var frequencyCounts = {};
+  var dictionary = [];
+  for (var i = 0; i < subjectsList.length; i++) {
+    var num = subjectsList[i];
+    frequencyCounts[num] = (frequencyCounts[num] || 0) + 1;
+  }
+
+  for (var i = 0; i < Object.keys(frequencyCounts).length; i++) {
+    var key = Object.keys(frequencyCounts)[i];
+    var value = Object.values(frequencyCounts)[i];
+    dictionary.push({"subject": key, "frequency": value })
+  }
+
+  dictionary.sort(function(a, b) {
+    return b.frequency - a.frequency;
+  });
+
+  console.log(dictionary);
+
+
+
+  // console.log(subjectsList.sort());
 
   var books = d3.select('#book-titles');
 
