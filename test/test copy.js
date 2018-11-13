@@ -10,7 +10,11 @@
 
 $.ajax({
 <<<<<<< HEAD
+<<<<<<< HEAD
     url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=title,checkoutmonth,checkouts&$order=checkouts DESC&$where=(checkoutyear=2014)AND(materialtype='BOOK')",
+=======
+    url: "https://data.seattle.gov/resource/5src-czff.json?checkoutyear=2018",
+>>>>>>> 2c03ac4609e2a960f44a7fe2c189dc46ff8551e9
 =======
     url: "https://data.seattle.gov/resource/5src-czff.json?checkoutyear=2018",
 >>>>>>> 2c03ac4609e2a960f44a7fe2c189dc46ff8551e9
