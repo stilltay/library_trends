@@ -9,15 +9,7 @@
 //https://data.seattle.gov/resource/tjb6-zsmc.json?$select=title,checkoutmonth,checkouts&$order=checkouts DESC&$where=(checkoutyear=2014)AND(materialtype='BOOK')
 
 $.ajax({
-<<<<<<< HEAD
-<<<<<<< HEAD
-    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=title,checkoutmonth,checkouts&$order=checkouts DESC&$where=(checkoutyear=2014)AND(materialtype='BOOK')",
-=======
-    url: "https://data.seattle.gov/resource/5src-czff.json?checkoutyear=2018",
->>>>>>> 2c03ac4609e2a960f44a7fe2c189dc46ff8551e9
-=======
-    url: "https://data.seattle.gov/resource/5src-czff.json?checkoutyear=2018",
->>>>>>> 2c03ac4609e2a960f44a7fe2c189dc46ff8551e9
+    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=subjects,count(checkouts)&$group=subjects&$where=subjects like '%25FANTASY%25'",
     type: "GET",
     data: {
       "$limit" : 120,
@@ -26,6 +18,7 @@ $.ajax({
 }).done(function(data) {
   alert("Retrieved " + data.length + " records from the dataset!");
 
+    /*
   //experiment
   var subjectsList = [];
   data.forEach(function(checkout) {
@@ -43,8 +36,9 @@ $.ajax({
         }
       });
     }
-  });
+  });*/
 
+    /*
   var frequencyCounts = {};
   var dictionary = [];
   for (var i = 0; i < subjectsList.length; i++) {
@@ -64,22 +58,25 @@ $.ajax({
 
   console.log(dictionary);
 
-
+*/
 
   // console.log(subjectsList.sort());
-
-  var books = d3.select('#book-titles');
-
-  // books.selectAll('.book')
-  //     .data(data)
-  //     .enter()
-  //     .append('p')
-  //     .attr('class', 'bookr')
-  //     .text(function(book){
-  //         return book['itemtitle'] + '. ' + book['collection'] + ' about ' + book['subjects'];
-  //     });
+    
+    console.log(data);
 
     /*
+  var books = d3.select('#book-titles');
+
+ books.selectAll('.book')
+       .data(data)
+       .enter()
+       .append('p')
+       .attr('class', 'bookr')
+       .text(function(book){
+          return book['title'] + '. ' + book['checkoutyear'] + ' about ' + book['checkouts'];
+       });
+
+    
     var bkTableBody = d3.select('#book-table tbody');
 
     var trBook = bkTableBody.selectAll('tr')
@@ -95,7 +92,7 @@ $.ajax({
 
     trBook.append('td')
         .text(function(book){
-            return book['materialtype'];
+            return book['checkoutyear'];
         });
 
     trBook.append('td')
@@ -104,6 +101,6 @@ $.ajax({
             return book['checkouts'];
         });
 
-    */
-
+    
+*/
 });
