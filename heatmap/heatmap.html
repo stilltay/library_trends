@@ -73,9 +73,10 @@
   	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   
   // linear colour scale
+/*
   var colours = d3.scaleLinear()
   	.domain(0,1000)
-  	.range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);
+  	.range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);*/
   
   var dayLabels = svg.selectAll(".dayLabel")
   	.data(days)
@@ -83,9 +84,9 @@
   	.append("text")
   	.text(function(d) { return d; })
   	.attr("x", 0)
-  	.attr("y", function(d, i) { return i * gridSize; })
+  	.attr("y", function(d, i) { return (i * gridSize * 1.11) + 2; })
   	.style("text-anchor", "end")
-		.attr("transform", "translate(-6," + gridSize / 1.5 + ")")
+		.attr("transform", "translate(-6," + gridSize / 2 + ")")
 
   var timeLabels = svg.selectAll(".timeLabel")
     .data(times)
@@ -100,7 +101,7 @@
     
     
     $.ajax({
-    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=checkoutmonth,checkoutyear,checkouts,title&$where=(title='The Martian: A Novel')",
+    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=checkoutmonth,checkoutyear,checkouts,title&$where=(title='Harry Potter and the deathly hallows / by J.K. Rowling ; illustrations by Mary GrandPré.')",
     type: "GET",
     data: {
       "$limit" : 10000,
@@ -115,6 +116,24 @@
         });
      dataset = data;
         console.log(dataset);
+        
+        var frequencyExtent = d3.extent(dataset, function(d){
+		return parseFloat(d.checkouts);
+	   });
+        
+        console.log(frequencyExtent);
+        
+        var colours = d3.scaleLinear()
+  	     .domain(frequencyExtent)
+  	     .range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);
+        
+         var colorScale = d3.scaleSequential(d3.interpolateCool);
+    
+        var max = d3.max(dataset, function(d){return +d.checkouts;});
+        var min = d3.min(dataset, function(d){return +d.checkouts;});
+        console.log(max);
+        console.log(min);
+
 
     /*
     // group data by location
@@ -148,20 +167,24 @@
         return d.key == location;
       });*/
 
-      var heatmap = svg.selectAll()
+      var heatmap = svg.selectAll('rect')
         .data(dataset)
         .enter()
         .append("rect")
-        .attr("x", function(d) { return (d.checkoutmonth-1) * gridSize; })
-        .attr("y", function(d) { return (d.checkoutyear-1) * gridSize; })
+        .attr("x", function(d) { return (d.checkoutyear-2005) * gridSize; })
+        .attr("y", function(d) { return (d.checkoutmonth-1) * gridSize; })
         .attr("class", "hour bordered")
         .attr("width", gridSize)
         .attr("height", gridSize)
         .style("stroke", "white")
         .style("stroke-opacity", 0.6)
-        .style("fill", function(d) { return colours(d.checkouts); })
+        .style("fill", function(d) {  
+            var normalizedValue = (+d.checkouts - min) / (max - min);
+            return colorScale(normalizedValue); })
       }
-    drawHeatmap(dataset);
+        drawHeatmap(dataset);
+        
+        console.log(heatmap);
 
         /*
     var updateHeatmap = function(dataset) {
