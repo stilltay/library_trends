@@ -2,52 +2,52 @@
 // 2cK1XYfoKd3Fl3ZYysflTtbDA
 
 $.ajax({
-    url: "https://data.seattle.gov/resource/5src-czff.json?checkoutyear=2018",
+    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$where=checkouts > 400",
     type: "GET",
     data: {
-      "$limit" : 5000,
+      "$limit" : 10000,
       "$$app_token" : "2cK1XYfoKd3Fl3ZYysflTtbDA"
     }
 }).done(function(data) {
   alert("Retrieved " + data.length + " records from the dataset!");
 
   //experiment
-  var subjectsList = [];
+  var titlewordsList = [];
   data.forEach(function(checkout) {
-    if (checkout.subjects != null) {
-      var temp = checkout.subjects.split(',');
-      temp.forEach(function(subject) {
+    if (checkout.itemtitle != null) {
+      var temp = checkout.itemtitle.split(" ");
+      temp.forEach(function(title) {
         // console.log("This is subjects list now", subjectsList);
         // if (subjectsList[subject] != null) {
         //   subjectsList[subject] += 1;
         // } else {
         //   subjectsList[subject] = 1;
         // }
-        if(subject != null) {
-          subjectsList.push(subject);
+        if(title != null) {
+          titlewordsList.push(title);
         }
       });
     }
   });
 
-  var frequencyCounts = {};
-  var dictionary = [];
-  for (var i = 0; i < subjectsList.length; i++) {
-    var num = subjectsList[i];
-    frequencyCounts[num] = (frequencyCounts[num] || 0) + 1;
-  }
-
-  for (var i = 0; i < Object.keys(frequencyCounts).length; i++) {
-    var key = Object.keys(frequencyCounts)[i];
-    var value = Object.values(frequencyCounts)[i];
-    dictionary.push({"subject": key, "frequency": value })
-  }
-
-  dictionary.sort(function(a, b) {
-    return b.frequency - a.frequency;
-  });
-
-  console.log(dictionary);
+  // var frequencyCounts = {};
+  // var dictionary = [];
+  // for (var i = 0; i < titlewordsList.length; i++) {
+  //   var num = titlewordsList[i];
+  //   frequencyCounts[num] = (frequencyCounts[num] || 0) + 1;
+  // }
+  //
+  // for (var i = 0; i < Object.keys(titlewordsList).length; i++) {
+  //   var key = Object.keys(frequencyCounts)[i];
+  //   var value = Object.values(frequencyCounts)[i];
+  //   dictionary.push({"subject": key, "frequency": value })
+  // }
+  //
+  // dictionary.sort(function(a, b) {
+  //   return b.frequency - a.frequency;
+  // });
+  //
+  // console.log(dictionary);
 
 
 
@@ -74,18 +74,18 @@ $.ajax({
     trBook.append('td')
         .style('text-align','center')
         .text(function(book){
-            return book['itemtitle'];
+            return book['title'];
         });
 
     trBook.append('td')
         .text(function(book){
-            return book['collection'];
+            return book['checkoutyear'];
         });
 
     trBook.append('td')
         .style('text-align','center')
         .text(function(book){
-            return book['subjects'];
+            return book['checkouts'];
         });
 
 });
