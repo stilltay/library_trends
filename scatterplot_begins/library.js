@@ -1,5 +1,5 @@
 var svg = d3.select('svg');
-var svgWidth = +svg.attr('width');
+var svgWidth = +svg.attr('width') - 260;
 var svgHeight = +svg.attr('height');
 
 var padding = {t: 40, r: 40, b: 40, l: 70};
@@ -47,26 +47,68 @@ d3.csv('./library.csv', function(error, dataset) {
   svg.append('g')
     .attr('class', 'x-axis')
     .attr('transform', 'translate(70,560)')
-    .attr('stroke', 'black')
+    .attr('stroke', 'white')
     .call(xAxis);
 
   svg.append('g')
       .attr('class', 'y-axis')
       .attr('transform', 'translate(70, 40)')
-      .attr('stroke', 'black')
+      .attr('stroke', 'white')
       .call(yAxis);
 
   svg.append('text')
     	.attr('class', 'x-label')
     	.attr('transform', 'translate(500, 590)')
-      .style("fill", "black")
+      .style("fill", "white")
     	.text('Year');
 
   svg.append('text')
     	.attr('class', 'y-label')
       .attr('transform', 'translate(20, 300) rotate(-90)')
-      .style("fill", "black")
+      .style("fill", "white")
     	.text('Frequency of Checkouts)');
+
+  svg.append('text')
+    	.attr('class', 'checkoutInfo')
+      .attr('transform', 'translate(1000, 100)')
+      .style("fill", "white")
+    	.text('Title:');
+
+  svg.append('text')
+    	.attr('class', 'checkoutInfo')
+      .attr('transform', 'translate(1000, 130)')
+      .style("fill", "white")
+    	.text('Creator:');
+
+  svg.append('text')
+    	.attr('class', 'checkoutInfo')
+      .attr('transform', 'translate(1000, 160)')
+      .style("fill", "white")
+    	.text('Frequency:');
+
+  svg.append('text')
+    	.attr('class', 'checkoutInfo')
+      .attr('transform', 'translate(1000, 190)')
+      .style("fill", "white")
+    	.text('Material Type:');
+
+  svg.append('text')
+    	.attr('class', 'checkoutInfo')
+      .attr('transform', 'translate(1000, 220)')
+      .style("fill", "white")
+    	.text('Publisher:');
+
+  svg.append('text')
+    	.attr('class', 'checkoutInfo')
+      .attr('transform', 'translate(1000, 250)')
+      .style("fill", "white")
+    	.text('Publication Year:');
+
+  svg.append('text')
+    	.attr('class', 'checkoutInfo')
+      .attr('transform', 'translate(1000, 280)')
+      .style("fill", "white")
+    	.text('Subjects:');
 
     updateChart();
 });
@@ -76,50 +118,92 @@ function updateChart() {
     .data(library)
     .enter()
     .append("circle")
-    .on('mouseover', function(d) {
-        // Use this to select the hovered element
-        var hovered = d3.select(this);
-        // add hovered class to style the group
-        hovered.classed('hovered', true);
-        // add a new text value element to the group
-        hovered.append('text')
-            .attr('class', 'value')
-            .attr('x', xScale(d.checkoutyear) + 10)
-            .attr('dy', '0.7em')
-            .text(d.title);
-    })
-    .on('mouseout', function(d) {
-        // Clean up the actions that happened in mouseover
-        var hovered = d3.select(this);
-        hovered.classed('hovered', false);
-        hovered.select('text.value').remove();
-    })
     .attr('cx', function(d) {
       return xScale(d.checkoutyear);
     })
     .attr('cy', function(d) {
       return yScale(d.checkouts);
     })
-    .attr('r', 2)
+    .attr('r', 4)
     .attr('fill', function(d) {
       return materialColors[d.materialtype];
     })
     .attr('fill-opacity', '0.35')
+    .on("mouseover", handleMouseOver)
+    .on("mouseout", handleMouseOut);
+}
 
-    chartG.append('text')
-        .attr('y', -10)
-        .text(function(d) {
-            return d.title;
-        });
-    //
-    // // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-    // dots.merge(dotsEnter)
-    //     .transition() // Add transition - this will interpolate the translate() on any changes
-    //     .duration(750)
-    //     .attr('transform', function(d) {
-    //         // Transform the group based on x and y property
-    //         var tx = xScale(d[chartScales.x]);
-    //         var ty = yScale(d[chartScales.y]);
-    //         return 'translate('+[tx, ty]+')';
-    //     });
+ function handleMouseOver(d, i) {
+   var tid = "t" + i;
+   var cid = "c" + i;
+   var fid = "f" + i;
+   var mid = "m" + i;
+   var pid = "p" + i;
+   var pyid = "py" + i;
+   var sid = "s" + i;
+
+
+   svg.append('text')
+       .attr('class', 'checkoutInfo')
+       .attr('transform', 'translate(1040, 100)')
+       .attr('id', tid)
+       .style("fill", "white")
+       .text(d.title);
+
+   svg.append('text')
+       .attr('class', 'checkoutInfo')
+       .attr('transform', 'translate(1060, 130)')
+       .attr('id', cid)
+       .style("fill", "white")
+       .text(d.creator);
+
+   svg.append('text')
+       .attr('class', 'checkoutInfo')
+       .attr('transform', 'translate(1060, 160)')
+       .attr('id', fid)
+       .style("fill", "white")
+       .text(d.frequency);
+
+       svg.append('text')
+           .attr('class', 'checkoutInfo')
+           .attr('transform', 'translate(1100, 190)')
+           .attr('id', mid)
+           .style("fill", "white")
+           .text(d.materialtype);
+
+       svg.append('text')
+            .attr('class', 'checkoutInfo')
+            .attr('transform', 'translate(1070, 220)')
+            .attr('id', pid)
+            .style("fill", "white")
+            .text(d.publisher);
+
+        svg.append('text')
+             .attr('class', 'checkoutInfo')
+             .attr('transform', 'translate(1120, 250)')
+             .attr('id', pyid)
+             .style("fill", "white")
+             .text(d.publicationyear);
+
+        svg.append('text')
+              .attr('class', 'checkoutInfo')
+              .attr('transform', 'translate(1060, 280)')
+              .attr('id', sid)
+              .style("fill", "white")
+              .text(d.subjects);
+
+        // d3plus.textWrap()
+        //    .container(d3.select("#checkoutInfo"))
+        //    .draw();
+ }
+
+ function handleMouseOut(d, i) {
+   d3.select("#" + "t" + i).remove();
+   d3.select("#" + "c" + i).remove();
+   d3.select("#" + "f" + i).remove();
+   d3.select("#" + "m" + i).remove();
+   d3.select("#" + "p" + i).remove();
+   d3.select("#" + "py" + i).remove();
+   d3.select("#" + "s" + i).remove();
+
 }
