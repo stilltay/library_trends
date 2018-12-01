@@ -130,7 +130,8 @@ function updateChart() {
     })
     .attr('fill-opacity', '0.35')
     .on("mouseover", handleMouseOver)
-    .on("mouseout", handleMouseOut);
+    .on("mouseout", handleMouseOut)
+    .on("click", handleMouseClick);
 }
 
  function handleMouseOver(d, i) {
@@ -206,4 +207,8 @@ function updateChart() {
    d3.select("#" + "py" + i).remove();
    d3.select("#" + "s" + i).remove();
 
+}
+
+function handleMouseClick(d, i) {
+    updateHeatmap(d.title);
 }

@@ -5,7 +5,7 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
   var margin = {top:40, right:50, bottom:70, left:50};
   
   // calculate width and height based on window size
-  var w = Math.max(Math.min(window.innerWidth, 500), 1000) - margin.left - margin.right - 20,
+  var w = Math.max(Math.min(window.innerWidth, 1000), 400) - margin.left - margin.right - 20,
   gridSize = Math.floor(w / times.length),
 	h = gridSize * (days.length+2);
 
@@ -49,10 +49,11 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
     .style("text-anchor", "middle")
     .attr("transform", "translate(" + gridSize / 2 + ", -6)");
 
+    var updatedTitle = "Harry Potter and the deathly hallows / by J.K. Rowling ; illustrations by Mary GrandPré.";
     
-    
+/*
     $.ajax({
-    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=checkoutmonth,checkoutyear,checkouts,title&$where=(title='Harry Potter and the deathly hallows / by J.K. Rowling ; illustrations by Mary GrandPré.')",
+    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=checkoutmonth,checkoutyear,checkouts,title&$where=(title='"+ updatedTitle + "')",
     type: "GET",
     data: {
       "$limit" : 10000,
@@ -108,7 +109,7 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
         .attr("value", function(d, i) { return i; })
         .text(function(d) { return d; });
     */
-
+/*
     // function to create the initial heatmap
     var drawHeatmap = function(dataset) {
 
@@ -117,7 +118,7 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
       var selectLocation = nest.find(function(d) {
         return d.key == location;
       });*/
-
+/*
       var heatmap = svgHM.selectAll('rect')
         .data(dataset)
         .enter()
@@ -180,5 +181,73 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
       }
       d3.select("#locationMenu").property("value", currentLocationIndex)
       updateHeatmap(locations[currentLocationIndex]);
-    })*/
+    })
+  })*/
+
+
+function updateHeatmap(newTitle) {
+    console.log(newTitle);
+     $.ajax({
+    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=checkoutmonth,checkoutyear,checkouts,title&$where=(title='"+ newTitle + "')",
+    type: "GET",
+    data: {
+      "$limit" : 10000,
+      "$$app_token" : "gj5klMMMFIV45YA3S1Qkk8Ssd"
+    }
+    }).done(function(data) {
+        alert("Retrieved " + data.length + " records from the dataset!");
+        data.forEach(function(d) {
+        d.checkoutmonth = +d.checkoutmonth;
+        d.checkoutyear = +d.checkoutyear;
+        d.checkouts = +d.checkouts;
+        });
+     dataset = data;
+         
+        console.log(dataset);
+        
+        var frequencyExtent = d3.extent(dataset, function(d){
+		return parseFloat(d.checkouts);
+	   });
+        
+        console.log(frequencyExtent);
+        
+        var colours = d3.scaleLinear()
+  	     .domain(frequencyExtent)
+  	     .range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);
+        
+         var colorScale = d3.scaleSequential(d3.interpolateWarm);
+    
+        var max = d3.max(dataset, function(d){return +d.checkouts;});
+        var min = d3.min(dataset, function(d){return +d.checkouts;});
+        
+
+         // function to create the initial heatmap
+        drawHeatmap(dataset, max, min, colorScale);
+        
+        console.log(heatmap);
+        
+         
   })
+}
+
+function drawHeatmap(dataset, max, min, colorScale) {
+   console.log(max);
+    console.log(min);
+    
+    var heatmap = svgHM.selectAll('rect')
+        .data(dataset)
+        .enter()
+        .append("rect")
+        .attr("x", function(d) { return (d.checkoutyear-2005) * gridSize; })
+        .attr("y", function(d) { return (d.checkoutmonth-1) * gridSize; })
+        .attr("class", "hour bordered")
+        .attr("width", gridSize)
+        .attr("height", gridSize)
+        .style("stroke", "white")
+        .style("stroke-opacity", 0.6)
+        .style("fill", function(d) {  
+            var normalizedValue = (+d.checkouts - min) / (max - min);
+            return colorScale(normalizedValue); })
+    
+   heatmap.exit().remove();
+}
