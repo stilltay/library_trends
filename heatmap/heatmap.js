@@ -5,7 +5,7 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
   var margin = {top:40, right:50, bottom:70, left:50};
   
   // calculate width and height based on window size
-  var w = Math.max(Math.min(window.innerWidth, 1000), 500) - margin.left - margin.right - 20,
+  var w = Math.max(Math.min(window.innerWidth, 500), 1000) - margin.left - margin.right - 20,
   gridSize = Math.floor(w / times.length),
 	h = gridSize * (days.length+2);
 
@@ -14,7 +14,7 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
 	d3.select("html").style("font-size", newFontSize + "%");
   
   // svg container
-  var svg = d3.select("#heatmap")
+  var svgHM = d3.select("#heatmap")
   	.append("svg")
   	.attr("width", w + margin.top + margin.bottom)
   	.attr("height", h + margin.left + margin.right)
@@ -27,23 +27,25 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
   	.domain(0,1000)
   	.range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);*/
   
-  var dayLabels = svg.selectAll(".dayLabel")
+  var dayLabels = svgHM.selectAll(".dayLabel")
   	.data(days)
   	.enter()
   	.append("text")
   	.text(function(d) { return d; })
   	.attr("x", 0)
   	.attr("y", function(d, i) { return (i * gridSize * 1.11) + 2; })
+    .style("fill", "white")
   	.style("text-anchor", "end")
 		.attr("transform", "translate(-6," + gridSize / 2 + ")")
 
-  var timeLabels = svg.selectAll(".timeLabel")
+  var timeLabels = svgHM.selectAll(".timeLabel")
     .data(times)
     .enter()
     .append("text")
     .text(function(d) { return d; })
     .attr("x", function(d, i) { return i * gridSize; })
     .attr("y", 0)
+    .style("fill", "white")
     .style("text-anchor", "middle")
     .attr("transform", "translate(" + gridSize / 2 + ", -6)");
 
@@ -76,7 +78,7 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
   	     .domain(frequencyExtent)
   	     .range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);
         
-         var colorScale = d3.scaleSequential(d3.interpolateViridis);
+         var colorScale = d3.scaleSequential(d3.interpolateWarm);
     
         var max = d3.max(dataset, function(d){return +d.checkouts;});
         var min = d3.min(dataset, function(d){return +d.checkouts;});
@@ -116,7 +118,7 @@ var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov
         return d.key == location;
       });*/
 
-      var heatmap = svg.selectAll('rect')
+      var heatmap = svgHM.selectAll('rect')
         .data(dataset)
         .enter()
         .append("rect")
