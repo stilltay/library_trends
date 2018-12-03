@@ -151,7 +151,6 @@ d3.csv('./library.csv', function(error, dataset) {
                         .attr("dominant-baseline","central")
                         .attr("fill","white")
                         .text(function(d) {return d;})
-  setUpHeatMap(library);
   updateChart();
 
 });
