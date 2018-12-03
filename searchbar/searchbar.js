@@ -1,31 +1,47 @@
 
 //code is copied from https://www.w3schools.com/howto/howto_js_autocomplete.asp
-
 var creators = []
-d3.csv('./library.csv', function(error, dataset) {
+d3.csv('../scatterplot_begins/library.csv', function(error, dataset) {
+  console.log("does this work??");
+  console.log("This is dataset yay", dataset);
   for (entry in dataset) {
     if (entry != "columns"){
       var creator = dataset[entry].creator
+      var title = dataset[entry].title
       if (creator != "" && !creators.includes(creator)) {
         creators.push(creator)
+      }
+      if (title != "" && !creators.includes(title.slice(0,40))) {
+        creators.push(title.slice(0,40))
       }
     }
   }
 })
+//
+// var string = creators,
+//     substring = userinput;
+// string.includes(substring);
 
 
-
-
-function autocomplete(inp) { 
+function autocomplete(inp) {
+  console.log("Hi, i've entered autocomplete.");
   arr = creators
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus;
+  var userinput= document.getElementById("myInput").value;
+    console.log(userinput);
   /*execute a function when someone writes in the text field:*/
+  console.log("imp", inp);
   inp.addEventListener("input", function(e) {
+      console.log("Eventlistener first one)");
       var a, b, i, val = this.value;
       /*close any already open lists of autocompleted values*/
       closeAllLists();
+
+      //*use userinput as substring
+      userinput= document.getElementById("myInput").value;
+
       if (!val) { return false;}
       currentFocus = -1;
       /*create a DIV element that will contain the items (values):*/
@@ -41,10 +57,10 @@ function autocomplete(inp) {
           /*create a DIV element for each matching element:*/
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
-          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-          b.innerHTML += arr[i].substr(val.length);
+          b.innerHTML = "<div style=\"color: white;\"><strong>" + arr[i].substr(0, val.length) + "</strong>" + arr[i].substr(val.length); + "</div>";
+          // b.innerHTML += "<div style =\"color:white;\">" + arr[i].substr(val.length); + "</div>"
           /*insert a input field that will hold the current array item's value:*/
-          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          b.innerHTML += "<div style=\"color: white;\"><input type='hidden' value='" + arr[i] + "'></div>";
           /*execute a function when someone clicks on the item value (DIV element):*/
               b.addEventListener("click", function(e) {
               /*insert the value for the autocomplete text field:*/
@@ -59,6 +75,7 @@ function autocomplete(inp) {
   });
   /*execute a function presses a key on the keyboard:*/
   inp.addEventListener("keydown", function(e) {
+    console.log("Eventlistener");
       var x = document.getElementById(this.id + "autocomplete-list");
       if (x) x = x.getElementsByTagName("div");
       if (e.keyCode == 40) {
