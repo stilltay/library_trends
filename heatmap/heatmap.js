@@ -1,253 +1,144 @@
- var dataset;
-var days = ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
-	times = ["2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"];
-  
-  var margin = {top:40, right:50, bottom:70, left:50};
-  
-  // calculate width and height based on window size
-  var w = Math.max(Math.min(window.innerWidth, 1000), 400) - margin.left - margin.right - 20,
-  gridSize = Math.floor(w / times.length),
-	h = gridSize * (days.length+2);
+var margin = {top:50, right:0, bottom:100, left:100};
+var width=960-margin.left-margin.right;
+var height=630-margin.top-margin.bottom;
+var gridSize=Math.floor(width/24);
+var legendElementWidth=gridSize*2.665;
+var buckets = 10;
+var colors = ["#f7fcf0","#e0f3db","#ccebc5","#a8ddb5","#7bccc4","#4eb3d3","#2b8cbe","#0868ac","#084081"];
+var days = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+var times = ["2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"];
+var heatmap;
+var legend;
 
-  //reset the overall font size
-	var newFontSize = w * 62.5 / 900;
-	d3.select("html").style("font-size", newFontSize + "%");
-  
-  // svg container
-  var svgHM = d3.select("#heatmap")
-  	.append("svg")
-  	.attr("width", w + margin.top + margin.bottom)
-  	.attr("height", h + margin.left + margin.right)
-  	.append("g")
-  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  
-  // linear colour scale
-/*
-  var colours = d3.scaleLinear()
-  	.domain(0,1000)
-  	.range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);*/
-  
-  var dayLabels = svgHM.selectAll(".dayLabel")
-  	.data(days)
-  	.enter()
-  	.append("text")
-  	.text(function(d) { return d; })
-  	.attr("x", 0)
-  	.attr("y", function(d, i) { return (i * gridSize * 1.11) + 2; })
-    .style("fill", "white")
-  	.style("text-anchor", "end")
-		.attr("transform", "translate(-6," + gridSize / 2 + ")")
+var newFontSize = width * 62.5 / 900;
+d3.select("html").style("font-size", newFontSize + "%");
 
-  var timeLabels = svgHM.selectAll(".timeLabel")
-    .data(times)
-    .enter()
-    .append("text")
-    .text(function(d) { return d; })
-    .attr("x", function(d, i) { return i * gridSize; })
-    .attr("y", 0)
-    .style("fill", "white")
-    .style("text-anchor", "middle")
-    .attr("transform", "translate(" + gridSize / 2 + ", -6)");
+var svgHM = d3.select("#heatmap").append("svg")
+	.attr("width",width + margin.left+margin.right)
+	.attr("height", height+margin.top+margin.bottom)
+	.append("g")
+	.attr("transform", "translate("+ margin.left+","+margin.top+")");
 
-    var updatedTitle = "Harry Potter and the deathly hallows / by J.K. Rowling ; illustrations by Mary GrandPré.";
-    
-/*
-    $.ajax({
-    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=checkoutmonth,checkoutyear,checkouts,title&$where=(title='"+ updatedTitle + "')",
-    type: "GET",
-    data: {
-      "$limit" : 10000,
-      "$$app_token" : "gj5klMMMFIV45YA3S1Qkk8Ssd"
-    }
-    }).done(function(data) {
-        alert("Retrieved " + data.length + " records from the dataset!");
-        data.forEach(function(d) {
-        d.checkoutmonth = +d.checkoutmonth;
-        d.checkoutyear = +d.checkoutyear;
-        d.checkouts = +d.checkouts;
-        });
-     dataset = data;
-        console.log(dataset);
-        
-        var frequencyExtent = d3.extent(dataset, function(d){
-		return parseFloat(d.checkouts);
-	   });
-        
-        console.log(frequencyExtent);
-        
-        var colours = d3.scaleLinear()
-  	     .domain(frequencyExtent)
-  	     .range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);
-        
-         var colorScale = d3.scaleSequential(d3.interpolateWarm);
-    
-        var max = d3.max(dataset, function(d){return +d.checkouts;});
-        var min = d3.min(dataset, function(d){return +d.checkouts;});
-        console.log(max);
-        console.log(min);
+function setUpHeatMap(data) {
+  dataset = data;
+	var colorScale = d3.scaleQuantile()
+		.domain([0, (d3.max(dataset, function(d){return d.checkouts;})/2),
+			d3.max(dataset, function(d){return d.checkouts;})])
+		.range(colors);
 
 
-    /*
-    // group data by location
-    var nest = d3.nest()
-      .key(function(d) { return d.location; })
-      .entries(dataset);
+	var dayLabels = svgHM.selectAll(".dayLabel")
+		.data(days)
+		.enter().append("text")
+		.text(function (d) {return d; })
+		.attr("y", function (d, i){ return i*gridSize;})
+		.style("text-anchor", "end")
+		.attr("transform", "translate(-6," + gridSize/1.5+")")
+            .style("fill", "white")
+		.attr("class", function(d, i) { return ((i>=0 && i<=4) ?
+			"dayLabel mono axis axis-workweek": "dayLabel mono axis"); });
 
-    // array of locations in the data
-    var locations = nest.map(function(d) { return d.key; });
-    var currentLocationIndex = 0;
+	var timeLabels = svgHM.selectAll(".timeLabel")
+		.data(times)
+		.enter().append("text")
+		.text(function(d){return d;})
+		.attr("x", function(d,i) {return i * gridSize;})
+		.attr("y",0)
+		.style("text-anchor", "middle")
+            .style("fill", "white")
+		.attr("transform", "translate(" + gridSize/2+", -6)")
+		.attr("class", function(d, i) { return ((i>=9 && i<= 17) ?
+			"timeLabel mono axis axis-worktime": "timeLabel mono axis"); });
 
-    // create location dropdown menu
-    var locationMenu = d3.select("#locationDropdown");
-    locationMenu
-      .append("select")
-      .attr("id", "locationMenu")
-      .selectAll("option")
-        .data(locations)
-        .enter()
-        .append("option")
-        .attr("value", function(d, i) { return i; })
-        .text(function(d) { return d; });
-    */
-/*
-    // function to create the initial heatmap
-    var drawHeatmap = function(dataset) {
+	var heatMap = svgHM.selectAll(".hour")
+		.data(dataset)
+		.enter().append("rect")
+		.attr("x", function(d) {return (d.checkoutyear-2005) * gridSize;})
+		.attr("y", function(d) {return (d.checkoutmonth-1) * gridSize;})
+		.attr("rx", 0)
+		.attr("ry", 0)
+		.attr("class", "hour bordered")
+		.attr("width", gridSize)
+		.attr("height", gridSize)
+		.style("fill", colors[0])
+             .style("stroke", "white")
+            .style("stroke-opacity", 0.6);
 
-        /*
-      // filter the data to return object of location of interest
-      var selectLocation = nest.find(function(d) {
-        return d.key == location;
-      });*/
-/*
-      var heatmap = svgHM.selectAll('rect')
-        .data(dataset)
-        .enter()
-        .append("rect")
-        .attr("x", function(d) { return (d.checkoutyear-2005) * gridSize; })
-        .attr("y", function(d) { return (d.checkoutmonth-1) * gridSize; })
-        .attr("class", "hour bordered")
-        .attr("width", gridSize)
-        .attr("height", gridSize)
-        .style("stroke", "white")
-        .style("stroke-opacity", 0.6)
-        .style("fill", function(d) {  
-            var normalizedValue = (+d.checkouts - min) / (max - min);
-            return colorScale(normalizedValue); })
-      }
-        drawHeatmap(dataset);
-        
-        console.log(heatmap);
+	heatMap.transition().duration(1000)
+		.style("fill", function(d){ return colorScale(d.checkouts);});
 
-        /*
-    var updateHeatmap = function(dataset) {
-      console.log("currentLocationIndex: " + currentLocationIndex)
-      // filter data to return object of location of interest
-      var selectLocation = nest.find(function(d) {
-        return d.key == location;
-      });
+	heatMap.append("title").text(function(d) {return d.checkouts;});
 
-      // update the data and redraw heatmap
-      var heatmap = svg.selectAll(".checkoutmonth")
-        .data(dataset)
-        .transition()
-          .duration(500)
-          .style("fill", function(d) { return colours(d.checkouts); })
-    }
+	var legend = svgHM.selectAll(".legend")
+		.data([0].concat(colorScale.quantiles()), function(d) {return d;})
+		.enter().append("g")
+		.attr("class", "legend");
 
-    // run update function when dropdown selection changes
-    locationMenu.on("change", function() {
-      // find which location was selected from the dropdown
-      var selectedLocation = d3.select(this)
-        .select("select")
-        .property("value");
-      currentLocationIndex = +selectedLocation;
-      // run update function with selected location
-      updateHeatmap(locations[currentLocationIndex]);
-    });    
+	legend.append("rect")
+		.attr("x", function(d, i){ return legendElementWidth * i;})
+		.attr("y", height)
+		.attr("width", legendElementWidth)
+		.attr("height", gridSize/2)
+		.style("fill", function(d, i) {return colors[i]; });
 
-    d3.selectAll(".nav").on("click", function() {
-      if(d3.select(this).classed("left")) {
-        if(currentLocationIndex == 0) {
-          currentLocationIndex = locations.length-1;
-        } else {
-          currentLocationIndex--;  
-        }
-      } else if(d3.select(this).classed("right")) {
-        if(currentLocationIndex == locations.length-1) {
-          currentLocationIndex = 0;
-        } else {
-          currentLocationIndex++;  
-        }
-      }
-      d3.select("#locationMenu").property("value", currentLocationIndex)
-      updateHeatmap(locations[currentLocationIndex]);
-    })
-  })*/
+	legend.append("text")
+		.attr("class", "mono")
+		.text(function(d) {return "≥ "+d.toString().substr(0,4);})
+		.attr("x", function(d, i){ return legendElementWidth *i;})
+		.attr("y", height+ gridSize)
+            .style("fill", "white");
 
-
-function updateHeatmap(newTitle) {
-    console.log(newTitle);
-     $.ajax({
-    url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=checkoutmonth,checkoutyear,checkouts,title&$where=(title='"+ newTitle + "')",
-    type: "GET",
-    data: {
-      "$limit" : 10000,
-      "$$app_token" : "gj5klMMMFIV45YA3S1Qkk8Ssd"
-    }
-    }).done(function(data) {
-        alert("Retrieved " + data.length + " records from the dataset!");
-        data.forEach(function(d) {
-        d.checkoutmonth = +d.checkoutmonth;
-        d.checkoutyear = +d.checkoutyear;
-        d.checkouts = +d.checkouts;
-        });
-     dataset = data;
-         
-        console.log(dataset);
-        
-        var frequencyExtent = d3.extent(dataset, function(d){
-		return parseFloat(d.checkouts);
-	   });
-        
-        console.log(frequencyExtent);
-        
-        var colours = d3.scaleLinear()
-  	     .domain(frequencyExtent)
-  	     .range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);
-        
-         var colorScale = d3.scaleSequential(d3.interpolateWarm);
-    
-        var max = d3.max(dataset, function(d){return +d.checkouts;});
-        var min = d3.min(dataset, function(d){return +d.checkouts;});
-        
-
-         // function to create the initial heatmap
-        drawHeatmap(dataset, max, min, colorScale);
-        
-        console.log(heatmap);
-        
-         
-  })
 }
 
-function drawHeatmap(dataset, max, min, colorScale) {
-   console.log(max);
-    console.log(min);
-    
-    var heatmap = svgHM.selectAll('rect')
-        .data(dataset)
-        .enter()
-        .append("rect")
-        .attr("x", function(d) { return (d.checkoutyear-2005) * gridSize; })
-        .attr("y", function(d) { return (d.checkoutmonth-1) * gridSize; })
-        .attr("class", "hour bordered")
-        .attr("width", gridSize)
-        .attr("height", gridSize)
-        .style("stroke", "white")
-        .style("stroke-opacity", 0.6)
-        .style("fill", function(d) {  
-            var normalizedValue = (+d.checkouts - min) / (max - min);
-            return colorScale(normalizedValue); })
-    
-   heatmap.exit().remove();
+
+function updateHeatmap(newTitle){
+
+  // d3.selectAll(".hour").remove();
+  // d3.selectAll(".legend").remove();
+
+	svg.selectAll(".legend").attr("opacity", 0);
+
+
+  console.log("Hi, I've entered updateHeatmap", dataset);
+
+	colorScale = d3.scaleQuantile()
+		.domain([0, (d3.max(dataset, function(d){return d.checkouts;})/2), d3.max(dataset, function(d){return d.checkouts;})])
+		.range(colors);
+
+
+	var heatMap = svgHM.selectAll(".hour")
+			.data(dataset)
+			.enter().append("rect")
+			.attr("x", function(d) {return (d.checkoutyear-2005) * gridSize;})
+			.attr("y", function(d) {return (d.checkoutmonth-1) * gridSize;})
+			.attr("rx", 0)
+			.attr("ry", 0)
+			.attr("class", "hour")
+			.attr("width", gridSize)
+			.attr("height", gridSize)
+			.style("fill", colors[0])
+              .style("stroke", "white")
+              .style("stroke-opacity", 0.6);
+
+	heatMap.selectAll("title").text(function(d) {return d.checkouts;});
+
+	var legend = svgHM.selectAll(".legend")
+			.data([0].concat(colorScale.quantiles()), function(d) {return d;})
+			.enter().append("g")
+			.attr("class", "legend");
+
+	legend.append("rect")
+		.attr("x", function(d, i){ return legendElementWidth * i;})
+		.attr("y", height)
+		.attr("width", legendElementWidth)
+		.attr("height", gridSize/2)
+		.style("fill", function(d, i) {return colors[i]; });
+
+	legend.append("text")
+		.attr("class", "mono")
+		.text(function(d) {return "≥ "+d.toString().substr(0,4);})
+		.attr("x", function(d, i){ return legendElementWidth *i;})
+		.attr("y", height+ gridSize)
+            .style("fill", "white");
+
 }
