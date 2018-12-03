@@ -101,16 +101,16 @@ var margin = {top:50, right:0, bottom:100, left:100},
 
 
 
-			d3.select("#n1")
-				.on("click", function() {
-					updateHeatmap("1_1.csv");
-				});
-
-
-			d3.select("#n2")
-				.on("click", function() {
-					updateHeatmap("1_2.csv");
-				});
+			// d3.select("#n1")
+			// 	.on("click", function() {
+			// 		updateHeatmap("1_1.csv");
+			// 	});
+			//
+			//
+			// d3.select("#n2")
+			// 	.on("click", function() {
+			// 		updateHeatmap("1_2.csv");
+			// 	});
 
 
 		}
@@ -161,9 +161,12 @@ function updateHeatmap(newTitle){
                 .style("stroke", "white")
                 .style("stroke-opacity", 0.6);
 
+		heatMap.transition().duration(1000)
+			.style("fill", function(d){ return colorScale(d.checkouts);});
+
 		heatMap.selectAll("title").text(function(d) {return d.checkouts;});
 
-		var legend = svgHM.selectAll(".legend")
+		legend = svgHM.selectAll(".legend")
 				.data([0].concat(colorScale.quantiles()), function(d) {return d;})
 				.enter().append("g")
 				.attr("class", "legend");
@@ -181,6 +184,8 @@ function updateHeatmap(newTitle){
 				.attr("x", function(d, i){ return legendElementWidth *i;})
 				.attr("y", height+ gridSize)
                 .style("fill", "white");
+
+			heatMap.exit().remove();
 
 		}
 	)
