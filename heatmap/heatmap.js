@@ -19,28 +19,7 @@ var margin = {top:50, right:0, bottom:100, left:100},
 		.append("g")
 		.attr("transform", "translate("+ margin.left+","+margin.top+")");
 
-	 $.ajax({
-        url: "https://data.seattle.gov/resource/tjb6-zsmc.json?$select=checkoutmonth,checkoutyear,checkouts,title&$where=(title='Harry Potter and the deathly hallows / by J.K. Rowling ; illustrations by Mary GrandPré.')",
-        type: "GET",
-        data: {
-            "$limit" : 10000,
-            "$$app_token" : "gj5klMMMFIV45YA3S1Qkk8Ssd"
-        }
-        }).done(function(data) {
-        alert("Retrieved " + data.length + " records from the dataset!");
-        data.forEach(function(d) {
-        d.checkoutmonth = +d.checkoutmonth;
-        d.checkoutyear = +d.checkoutyear;
-        d.checkouts = +d.checkouts;
-        });
-        dataset = data;
-
-			var colorScale = d3.scaleQuantile()
-				.domain([0, (d3.max(dataset, function(d){return d.checkouts;})/2), d3.max(dataset, function(d){return d.checkouts;})])
-				.range(colors);
-
-
-			var dayLabels = svgHM.selectAll(".dayLabel")
+	var dayLabels = svgHM.selectAll(".dayLabel")
 				.data(days)
 				.enter().append("text")
 				.text(function (d) {return d; })
@@ -50,7 +29,7 @@ var margin = {top:50, right:0, bottom:100, left:100},
                 .style("fill", "white")
 				.attr("class", function(d, i) { return ((i>=0 && i<=4) ? "dayLabel mono axis axis-workweek": "dayLabel mono axis"); });
 
-			var timeLabels = svgHM.selectAll(".timeLabel")
+    var timeLabels = svgHM.selectAll(".timeLabel")
 				.data(times)
 				.enter().append("text")
 				.text(function(d){return d;})
@@ -60,61 +39,6 @@ var margin = {top:50, right:0, bottom:100, left:100},
                 .style("fill", "white")
 				.attr("transform", "translate(" + gridSize/2+", -6)")
 				.attr("class", function(d, i) { return ((i>=9 && i<= 17) ? "timeLabel mono axis axis-worktime": "timeLabel mono axis"); });
-
-			var heatMap = svgHM.selectAll(".hour")
-				.data(dataset)
-				.enter().append("rect")
-				.attr("x", function(d) {return (d.checkoutyear-2005) * gridSize;})
-				.attr("y", function(d) {return (d.checkoutmonth-1) * gridSize;})
-				.attr("rx", 0)
-				.attr("ry", 0)
-				.attr("class", "hour bordered")
-				.attr("width", gridSize)
-				.attr("height", gridSize)
-				.style("fill", colors[0])
-                 .style("stroke", "white")
-                .style("stroke-opacity", 0.6);
-
-			heatMap.transition().duration(1000)
-				.style("fill", function(d){ return colorScale(d.checkouts);});
-
-			heatMap.append("title").text(function(d) {return d.checkouts;});
-
-			var legend = svgHM.selectAll(".legend")
-				.data([0].concat(colorScale.quantiles()), function(d) {return d;})
-				.enter().append("g")
-				.attr("class", "legend");
-
-			legend.append("rect")
-				.attr("x", function(d, i){ return legendElementWidth * i;})
-				.attr("y", height)
-				.attr("width", legendElementWidth)
-				.attr("height", gridSize/2)
-				.style("fill", function(d, i) {return colors[i]; });
-
-			legend.append("text")
-				.attr("class", "mono")
-				.text(function(d) {return "≥ "+d.toString().substr(0,4);})
-				.attr("x", function(d, i){ return legendElementWidth *i;})
-				.attr("y", height+ gridSize)
-                .style("fill", "white");
-
-
-
-			// d3.select("#n1")
-			// 	.on("click", function() {
-			// 		updateHeatmap("1_1.csv");
-			// 	});
-			//
-			//
-			// d3.select("#n2")
-			// 	.on("click", function() {
-			// 		updateHeatmap("1_2.csv");
-			// 	});
-
-
-		}
-);
 
 
 function updateHeatmap(newTitle){
@@ -132,7 +56,7 @@ function updateHeatmap(newTitle){
             "$$app_token" : "gj5klMMMFIV45YA3S1Qkk8Ssd"
         }
         }).done(function(data) {
-        alert("Retrieved " + data.length + " records from the dataset!");
+       
         data.forEach(function(d) {
         d.checkoutmonth = +d.checkoutmonth;
         d.checkoutyear = +d.checkoutyear;
@@ -142,7 +66,7 @@ function updateHeatmap(newTitle){
 
         console.log(dataset);
 
-		colorScale = d3.scaleQuantile()
+		var colorScale = d3.scaleQuantile()
 			.domain([0, (d3.max(data, function(d){return d.checkouts;})/2), d3.max(data, function(d){return d.checkouts;})])
 			.range(colors);
 
@@ -166,7 +90,7 @@ function updateHeatmap(newTitle){
 
 		heatMap.selectAll("title").text(function(d) {return d.checkouts;});
 
-		legend = svgHM.selectAll(".legend")
+		var legend = svgHM.selectAll(".legend")
 				.data([0].concat(colorScale.quantiles()), function(d) {return d;})
 				.enter().append("g")
 				.attr("class", "legend");
