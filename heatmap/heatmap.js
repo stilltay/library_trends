@@ -40,6 +40,13 @@ var margin = {top:50, right:0, bottom:100, left:100},
 				.attr("transform", "translate(" + gridSize/2+", -6)")
 				.attr("class", function(d, i) { return ((i>=9 && i<= 17) ? "timeLabel mono axis axis-worktime": "timeLabel mono axis"); });
 
+    svgHM.append('text')
+    	.attr('class', 'chartTitle')
+        .attr('transform', 'translate(0, -30)')
+        .style("fill", "white")
+        .style("font-size", "18px")
+    	.text('Frequency of Checkouts per Month/Year for <select item above>');
+    
 
 function updateHeatmap(newTitle){
 
@@ -84,12 +91,24 @@ function updateHeatmap(newTitle){
 				.style("fill", colors[0])
                 .style("stroke", "white")
                 .style("stroke-opacity", 0.6);
+        
+        heatMap.append("title");
 
 		heatMap.transition().duration(1000)
 			.style("fill", function(d){ return colorScale(d.checkouts);});
 
 		heatMap.selectAll("title").text(function(d) {return d.checkouts;});
-
+        
+        svgHM.select(".chartTitle")
+            .text('Frequency of Checkouts per Month/Year for ' + newTitle);
+        
+        /*
+       svgHM.append('text')
+    	.attr('class', 'y-label')
+        .attr('transform', 'translate(0, -30)')
+        .style("fill", "white")
+    	.text('Frequency of Checkouts per Month/Year for "' + newTitle +'"');*/
+        
 		var legend = svgHM.selectAll(".legend")
 				.data([0].concat(colorScale.quantiles()), function(d) {return d;})
 				.enter().append("g")
@@ -108,7 +127,7 @@ function updateHeatmap(newTitle){
 				.attr("x", function(d, i){ return legendElementWidth *i;})
 				.attr("y", height+ gridSize)
                 .style("fill", "white");
-
+        
 			heatMap.exit().remove();
 
 		}

@@ -1,8 +1,14 @@
 var svg = d3.select('svg');
 var svgWidth = +svg.attr('width') -60;
-var svgHeight = +svg.attr('height') ;
+var svgHeight = +svg.attr('height');
 
 var padding = {t: 40, r: 40, b: 140, l: 70};
+
+var svgTB = d3.select("#toolbar").append("svg")
+		.attr("width",1800)
+		.attr("height",100)
+		.append("g")
+		.attr("transform", "translate("+ padding.l+","+ padding.t+")");
 
 var chartG = svg.append('g')
     .attr('transform', 'translate('+[padding.l, padding.t]+')');
@@ -77,7 +83,7 @@ d3.csv('./library.csv', function(error, dataset) {
     	.text('Frequency of Checkouts/Month');
 
     //container for all buttons
-    var allButtons= svg.append("g")
+    var allButtons= svgTB.append("g")
                                 .attr("id","allButtons");
 
     //labels for buttons
@@ -216,8 +222,10 @@ function updateColorScale(dataset, i) {
     var normalizedValue;
     var min;
     var max;
-
+    
+    
     chartG.selectAll('circle')
+            .transition().duration(1000)
             .attr('fill', function(d) {
                 if(i == 0) {
                     if(d.materialtype=="MAGAZINE") {
@@ -240,5 +248,6 @@ function updateColorScale(dataset, i) {
                      return materialColors[d.materialtype];
                 }
 
-            });
+            })
+            .transition().duration(2000);
 }
