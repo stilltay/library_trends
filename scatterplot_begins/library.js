@@ -73,13 +73,13 @@ d3.csv('./library.csv', function(error, dataset) {
   svg.append('text')
     	.attr('class', 'x-label')
     	.attr('transform', 'translate(850, 790)')
-      .style("fill", "white")
+        .style("fill", "white")
     	.text('Checkout Year');
 
   svg.append('text')
     	.attr('class', 'y-label')
-      .attr('transform', 'translate(20, 480) rotate(-90)')
-      .style("fill", "white")
+        .attr('transform', 'translate(20, 480) rotate(-90)')
+        .style("fill", "white")
     	.text('Frequency of Checkouts/Month');
 
     //container for all buttons
@@ -105,6 +105,7 @@ d3.csv('./library.csv', function(error, dataset) {
         .style("cursor","pointer")
             .on("click",function(d,i) {
                 updateButtonColors(d3.select(this), d3.select(this.parentNode));
+                updateLegendScale(library, i);
                 updateColorScale(library, i);
             })
             .on("mouseover", function() {
@@ -145,7 +146,7 @@ d3.csv('./library.csv', function(error, dataset) {
                         .attr("y",y0)
                         .attr("rx",5) //rx and ry give the buttons rounded corners
                         .attr("ry",5)
-                        .attr("fill",defaultColor)
+                        .attr("fill",defaultColor);
 
     buttonGroups.append("text")
                         .attr("class","buttonText")
@@ -156,7 +157,7 @@ d3.csv('./library.csv', function(error, dataset) {
                         .attr("text-anchor","middle")
                         .attr("dominant-baseline","central")
                         .attr("fill","white")
-                        .text(function(d) {return d;})
+                        .text(function(d) {return d;});
   updateChart();
 
 });
@@ -250,4 +251,134 @@ function updateColorScale(dataset, i) {
 
             })
             .transition().duration(2000);
+}
+
+var svgLegend = d3.select("svg");
+
+function updateLegendScale(dataset, i) {
+    
+    if(i == 0){
+        svgLegend.select(".legendMonth").remove();
+        svgLegend.select(".legendUsage").remove();
+        svgLegend.select(".legendMaterial").remove();
+        yearScale();
+    } else if(i == 1){
+        svgLegend.select(".legendYear").remove();
+        svgLegend.select(".legendUsage").remove();
+        svgLegend.select(".legendMaterial").remove();
+        monthScale();
+    } else if(i == 2){
+        svgLegend.select(".legendMonth").remove();
+        svgLegend.select(".legendYear").remove();
+        svgLegend.select(".legendMaterial").remove();
+        usageScale();
+    } else if (i == 3){
+        svgLegend.select(".legendMonth").remove();
+        svgLegend.select(".legendYear").remove();
+        svgLegend.select(".legendUsage").remove();
+        materialScale();
+    }
+}
+
+function monthScale() {
+    
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+    
+    var sequentialScale = d3.scaleSequential(d3.interpolateCool)
+    .domain([0,12]);
+
+    svgLegend.append("g")
+    .attr("class", "legendMonth")
+    .attr("transform", "translate(700,60)")
+    .attr("fill", "white")
+    .style("fill-opacity", "0.5");
+
+    var legendSequential = d3.legendColor()
+    .shapeWidth(30)
+    .cells(12)
+    .orient("horizontal")
+    .labels(months)
+    .scale(sequentialScale); 
+
+    svgLegend.select(".legendMonth")
+    .call(legendSequential);
+   
+}
+
+function yearScale() {
+    
+    var years = ["2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"];
+    
+    var linear = d3.scaleLinear()
+    .domain([0,14])
+    .range(["#2E00E3", "#2EF8E3"]);
+
+    svgLegend.append("g")
+    .attr("class", "legendYear")
+    .attr("transform", "translate(700,60)")
+    .attr("fill", "white")
+    .style("fill-opacity", "0.5");
+
+    var legendLinear = d3.legendColor()
+    .shapeWidth(30)
+    .cells(14)
+    .orient('horizontal')
+    .labels(years)
+    .scale(linear);
+
+    svgLegend.select(".legendYear")
+    .call(legendLinear);
+   
+}
+
+function usageScale() {
+    
+    var usage = ["DIGITAL", "PHYSICAL"];
+    
+    var linear = d3.scaleLinear()
+    .domain([0,2])
+    .range(["white", "#7777BB"]);
+
+    svgLegend.append("g")
+    .attr("class", "legendUsage")
+    .attr("transform", "translate(700,60)")
+    .attr("fill", "white")
+    .style("fill-opacity", "0.5");;
+
+    var legendLinear = d3.legendColor()
+    .shapeWidth(30)
+    .shapePadding(30)
+    .cells(2)
+    .orient('horizontal')
+    .labels(usage)
+    .scale(linear);
+
+    svgLegend.select(".legendUsage")
+    .call(legendLinear);
+}
+
+function materialScale() {
+    
+    var materials = ["MIXED", "BOOK", "REGPRINT", "VIDEODISC", "MAGAZINE", "EBOOK", "SOUNDDISC", "SONG"];
+    
+    var colorRange = ["#fc5a74", "#fee633", "#24d5e8", "#82e92d", "#fc5a74", "#0016FE", "#FE00EE", "#00FEF5"];
+    
+    var ordinal = d3.scaleOrdinal()
+    .domain(materials)
+    .range(colorRange);
+
+    svgLegend.append("g")
+    .attr("class", "legendMaterial")
+    .attr("transform", "translate(700,60)")
+    .attr("fill", "white")
+    .style("fill-opacity", "0.5");
+
+    var legendOrdinal = d3.legendColor()
+    .shapeWidth(30)
+    .shapePadding(30)
+    .orient('horizontal')
+    .scale(ordinal);
+
+    svgLegend.select(".legendMaterial")
+    .call(legendOrdinal);
 }
