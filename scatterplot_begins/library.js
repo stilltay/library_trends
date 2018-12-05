@@ -29,11 +29,13 @@ var yearColors = {2005: '#2E00E3', 2006: '#2E10E3',
 var prevD;
 var prevI = -1;
 var secondClick = false;
+var input1;
+var colorScaleIndex = 0;
 
 //Axis Variable
 var yAxisG = svg.append('g')
       .attr('class', 'y-axis')
-      .attr('transform', 'translate(60, 40)')
+      .attr('transform', 'translate(70, 40)')
       .attr('stroke', 'white');
 
 var xAxisG = svg.append('g')
@@ -42,7 +44,7 @@ var xAxisG = svg.append('g')
     .attr('stroke', 'white');
 
 d3.csv('./library.csv', function(error, dataset) {
-  
+
 
   library = dataset;
   parseTime = d3.timeParse("%Y");
@@ -58,12 +60,12 @@ d3.csv('./library.csv', function(error, dataset) {
       //console.log(Number(d['checkoutyear']));
       return Number(d['checkoutyear']);
   });
-  
+
   xScale = d3.scaleTime()
     .domain(yearsExtent)
       .rangeRound([20, chartWidth]);
 
-  
+
   var xAxis = d3.axisBottom(xScale);
 
   svg.append('g')
@@ -165,7 +167,7 @@ d3.csv('./library.csv', function(error, dataset) {
 
   domainMap = {};
 
-  dataset.columns.forEach(function(column) 
+  dataset.columns.forEach(function(column)
   {
     if(column=="checkouts" || column =="publicationyear" || column == "checkoutmonth" || column=="checkoutyear")
     {
@@ -193,6 +195,30 @@ d3.csv('./library.csv', function(error, dataset) {
 
 });
 
+function highlightSelection(search) {
+  chartG.selectAll('circle')
+    .attr('fill', function(d) {
+      if (search === d.title || search === d.publisher || search === d.creator) {
+        return "#dada4a";
+      } else {
+        return "gray";
+      }
+    })
+    .attr('opacity', function(d) {
+      if (search === d.title || search === d.publisher || search === d.creator) {
+        return "1";
+      } else {
+        return ".5";
+      }
+    })
+    .attr('r', function(d) {
+      if (search === d.title || search === d.publisher || search === d.creator) {
+        return 6;
+      } else {
+        return 4;
+      }
+    })
+}
 
 function updateChart() {
 
@@ -200,27 +226,27 @@ function updateChart() {
   if(chartScales.y=="publicationyear" || chartScales.y=="checkoutyear")
   {
       yScale=d3.scaleTime();
-      yScale.domain(domainMap[chartScales.y]); 
-      yScale.range([chartHeight-20, 0]);    
+      yScale.domain(domainMap[chartScales.y]);
+      yScale.range([chartHeight-20, 0]);
   }
   else if (chartScales.y=="usageclass" || chartScales.y=="materialtype")
-  {      
+  {
       yScale=d3.scaleOrdinal();
 
       if(chartScales.y=="materialtype")
       {
         yScale.domain(['BOOK','EBOOK','MIXED','REGPRINT','MAGAZINE','SOUNDDISC','SONG','VIDEODISC'])
-              .range([chartHeight-20,(chartHeight-20)/7, 2*(chartHeight-20)/7, 3*(chartHeight-20)/7, 4*(chartHeight-20)/7, 5*(chartHeight-20)/7, 6*(chartHeight-20)/7, 0]);  
-      } 
+              .range([chartHeight-20,(chartHeight-20)/7, 2*(chartHeight-20)/7, 3*(chartHeight-20)/7, 4*(chartHeight-20)/7, 5*(chartHeight-20)/7, 6*(chartHeight-20)/7, 0]);
+      }
       else
       {
         yScale.domain(['PHYSICAL','DIGITAL']);
         yScale.range([(chartHeight-20)/7, 6*(chartHeight)/7]);
       }
-  }           
+  }
   else if (chartScales.y=="checkouts" || chartScales.y == "checkoutmonth")
   {
-      yScale = d3.scaleLinear(); 
+      yScale = d3.scaleLinear();
       //console.log(domainMap[chartScales.y]);
       yScale.domain(domainMap[chartScales.y]);
       yScale.range([chartHeight-20, 0]);
@@ -231,30 +257,31 @@ function updateChart() {
   {
       xScale=d3.scaleTime();
       xScale.domain(domainMap[chartScales.x])
-            .range([20, chartWidth]);    
+            .range([20, chartWidth]);
   }
   else if (chartScales.x=="usageclass" || chartScales.x=="materialtype")
-  {      
+  {
       xScale=d3.scaleOrdinal();
 
       if(chartScales.x=="materialtype")
       {
         xScale.domain(['BOOK','SONG','SOUNDDISC','MAGAZINE','REGPRINT','MIXED','EBOOK','VIDEODISC'])
-              .range([60, 60 + (chartWidth-60)/7, 60+(2*(chartWidth-60))/7, 60+(3*(chartWidth-60))/7, 60+(4*(chartWidth-60))/7, 60+(5*(chartWidth-60))/7, 60+(6*(chartWidth-60))/7, chartWidth]);  
-      } 
+              .range([60, 60 + (chartWidth-60)/7, 60+(2*(chartWidth-60))/7, 60+(3*(chartWidth-60))/7, 60+(4*(chartWidth-60))/7, 60+(5*(chartWidth-60))/7, 60+(6*(chartWidth-60))/7, chartWidth]);
+      }
       else
       {
         xScale.domain(['DIGITAL', 'PHYSICAL']);
         xScale.range([ chartWidth/7, 6*(chartWidth)/7]);
       }
-  }           
+  }
   else if (chartScales.x=="checkouts" || chartScales.x == "checkoutmonth")
   {
-      xScale = d3.scaleLinear(); 
-      xScale.domain(domainMap[chartScales.x])
+      xScale = d3.scaleLinear();
+      //console.log(domainMap[chartScales.y]);
+      xScale.domain(domainMap[chartScales.y])
              .range([20, chartWidth]);
   }
-   
+
  yAxisG.transition()
   .duration(800)
   .call(d3.axisLeft(yScale));
@@ -265,24 +292,25 @@ xAxisG.transition()
 
 
 var simulation = d3.forceSimulation(library)
-  .force("x", d3.forceX(function(d) { 
-          if(chartScales.x!="publicationyear")
+  .force("x", d3.forceX(function(d) {
+          if(chartScales.x!="publicationyear" && chartScales.x!="checkoutyear ")
             return xScale(d[chartScales.x]);
           else
             return xScale(parseTime(d[chartScales.x]));
         }).strength(1)
   )
-  .force("y", d3.forceY(function(d) { 
-          if(chartScales.y!="publicationyear")
+  .force("y", d3.forceY(function(d) {
+          if(chartScales.y!="publicationyear" && chartScales.y!="checkoutyear ")
             return yScale(d[chartScales.y]);
           else
             return yScale(parseTime(d[chartScales.y]));
         }).strength(1)
   )
   .force("collide", d3.forceCollide(5))
+
   .stop();
 
-  for (var i = 0; i < 30; ++i) 
+  for (var i = 0; i < 50; ++i)
     {
         simulation.tick();
     }
@@ -293,9 +321,9 @@ var simulation = d3.forceSimulation(library)
   var titlesEnter = titles.enter()
     .append('g')
     .attr('class', 'title')
-    .attr('transform', function(d) 
-    {    
-       if(chartScales.x!="publicationyear" && chartScales.x!="usageclass")
+    .attr('transform', function(d)
+    {
+       if(chartScales.x!="publicationyear")
           {
             var tx = xScale(d[chartScales.x]);
           }
@@ -303,13 +331,7 @@ var simulation = d3.forceSimulation(library)
           {
             var tx = xScale(parseTime(d[chartScales.x]));
           }
-        else if (chartScales.x == "usageclass")
-          {
-            var tx = xScale(d[chartScales.x]);
-            console.log(d[chartScales.x]);
-            console.log(xScale(d[chartScales.x])); 
-          }
-        
+
         if(chartScales.y!="publicationyear")
           {
             var ty = yScale(d[chartScales.y]);
@@ -320,7 +342,7 @@ var simulation = d3.forceSimulation(library)
           }
         return 'translate('+[tx, ty]+')';
     });
-    
+
   titlesEnter.append('circle')
     .attr('r', 4)
     .attr('fill', function(d) {
@@ -364,15 +386,17 @@ function handleMouseClick(d, i) {
 }
 
 function updateColorScale(dataset, i) {
-
   var colorScale;
   var normalizedValue;
   var min;
   var max;
+	colorScaleIndex = i;
 
-      
+
   chartG.selectAll('circle')
               .transition().duration(1000)
+							.attr('opacity', .5)
+							.attr('r', 4)
               .attr('fill', function(d) {
                   if(i == 0) {
                       if(d.materialtype=="MAGAZINE") {
@@ -403,7 +427,7 @@ function updateColorScale(dataset, i) {
 var svgLegend = d3.select("svg");
 
 function updateLegendScale(dataset, i) {
-    
+
     if(i == 0){
         svgLegend.select(".legendMonth").remove();
         svgLegend.select(".legendUsage").remove();
@@ -428,9 +452,9 @@ function updateLegendScale(dataset, i) {
 }
 
 function monthScale() {
-    
+
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-    
+
     var sequentialScale = d3.scaleSequential(d3.interpolateCool)
     .domain([0,12]);
 
@@ -445,16 +469,16 @@ function monthScale() {
     .cells(12)
     .orient("horizontal")
     .labels(months)
-    .scale(sequentialScale); 
+    .scale(sequentialScale);
 
     svgLegend.select(".legendMonth")
-    .call(legendSequential);  
+    .call(legendSequential);
 }
 
 function yearScale() {
-    
+
     var years = ["2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"];
-    
+
     var linear = d3.scaleLinear()
     .domain([0,14])
     .range(["#2E00E3", "#2EF8E3"]);
@@ -474,13 +498,13 @@ function yearScale() {
 
     svgLegend.select(".legendYear")
     .call(legendLinear);
-   
+
 }
 
 function usageScale() {
-    
+
     var usage = ["DIGITAL", "PHYSICAL"];
-    
+
     var linear = d3.scaleLinear()
     .domain([0,2])
     .range(["white", "#7777BB"]);
@@ -504,11 +528,11 @@ function usageScale() {
 }
 
 function materialScale() {
-    
+
     var materials = ["MIXED", "BOOK", "REGPRINT", "VIDEODISC", "MAGAZINE", "EBOOK", "SOUNDDISC", "SONG"];
-    
+
     var colorRange = ["#fc5a74", "#fee633", "#24d5e8", "#82e92d", "#fc5a74", "#0016FE", "#FE00EE", "#00FEF5"];
-    
+
     var ordinal = d3.scaleOrdinal()
     .domain(materials)
     .range(colorRange);
@@ -543,4 +567,12 @@ function onXScaleChanged() {
     chartScales.x = select.options[select.selectedIndex].value
     // Update chart
     updateChart();
+}
+
+function getDataset() {
+  return library;
+}
+
+function getColorScaleIndex() {
+  return colorScaleIndex;
 }
