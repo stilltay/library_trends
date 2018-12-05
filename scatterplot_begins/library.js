@@ -7,6 +7,7 @@ var padding = {t: 40, r: 40, b: 140, l: 70};
 var svgTB = d3.select("#toolbar").append("svg")
 		.attr("width",1800)
 		.attr("height",100)
+    .attr("class","svgTB")
 		.append("g")
 		.attr("transform", "translate("+ padding.l+","+ padding.t+")");
 
@@ -17,7 +18,7 @@ var chartWidth = svgWidth - padding.l - padding.r;
 var chartHeight = svgHeight - padding.t - padding.b;
 
 var materialColors = {MIXED: '#fc5a74', BOOK: '#fee633',
-   REGRPRINT: '#24d5e8', VIDEODISC: '#82e92d', MAGAZINE: '#fc5a74' , EBOOK:'#0016FE', SOUNDDISC:'#FE00EE', SONG:'#00FEF5'};
+   REGPRINT: '#24d5e8', VIDEODISC: '#82e92d', MAGAZINE: '#fc5a74' , EBOOK:'#0016FE', SOUNDDISC:'#FE00EE', SONG:'#00FEF5'};
 
 var yearColors = {2005: '#2E00E3', 2006: '#2E10E3',
     2007: '#2E29E3', 2008: '#2E3FE3', 2009: '#2E56E3', 2010: '#2E6AE3', 2011: '#2E7FE3',
@@ -29,46 +30,48 @@ var prevD;
 var prevI = -1;
 var secondClick = false;
 
+//Axis Variable
+var yAxisG = svg.append('g')
+      .attr('class', 'y-axis')
+      .attr('transform', 'translate(60, 40)')
+      .attr('stroke', 'white');
+
+var xAxisG = svg.append('g')
+    .attr('class', 'x-axis')
+    .attr('transform', 'translate(70,720)')
+    .attr('stroke', 'white');
+
 d3.csv('./library.csv', function(error, dataset) {
-  console.log(dataset);
+  
+
   library = dataset;
-  var parseTime = d3.timeParse("%Y");
+  parseTime = d3.timeParse("%Y");
 
   library.forEach(function(d) {
     d.checkoutyear = parseTime(d.checkoutyear);
     d.checkouts = +d.checkouts;
+    //d.publicationyear = parseTime(d.publicationyear);
   });
 
+/*
   var yearsExtent = d3.extent(library, function(d) {
+      //console.log(Number(d['checkoutyear']));
       return Number(d['checkoutyear']);
   });
-
-  var frequencyExtent = d3.extent(library, function(d) {
-      return Number(d['checkouts']);
-  });
-
+  
   xScale = d3.scaleTime()
     .domain(yearsExtent)
       .rangeRound([20, chartWidth]);
 
-  yScale = d3.scaleLinear()
-    .domain(frequencyExtent)
-      .range([chartHeight-20, 0]);
-
+  
   var xAxis = d3.axisBottom(xScale);
-  var yAxis = d3.axisLeft(yScale);
 
   svg.append('g')
     .attr('class', 'x-axis')
     .attr('transform', 'translate(70,720)')
     .attr('stroke', 'white')
     .call(xAxis);
-
-  svg.append('g')
-      .attr('class', 'y-axis')
-      .attr('transform', 'translate(70, 40)')
-      .attr('stroke', 'white')
-      .call(yAxis);
+*/
 
   svg.append('text')
     	.attr('class', 'x-label')
@@ -82,82 +85,110 @@ d3.csv('./library.csv', function(error, dataset) {
         .style("fill", "white")
     	.text('Frequency of Checkouts/Month');
 
-    //container for all buttons
-    var allButtons= svgTB.append("g")
-                                .attr("id","allButtons");
 
-    //labels for buttons
-    var labels= ["Publication Year","Checkout Month","Usage Class", "Material Type"];
 
-     var defaultColor= "#7777BB";
-     var hoverColor= "#0000ff";
-     var pressedColor= "#000077";
+  //container for all buttons
+  var allButtons= svgTB.append("g")
+                        .attr("id","allButtons");
 
-    var min;
-    var max;
+  //labels for buttons
+  var labels= ["Publication Year","Checkout Month","Usage Class", "Material Type"];
 
-     //groups for each button (which will hold a rect and text)
-    var buttonGroups= allButtons.selectAll("g.button")
-        .data(labels)
-        .enter()
-        .append("g")
-        .attr("class","button")
-        .style("cursor","pointer")
-            .on("click",function(d,i) {
-                updateButtonColors(d3.select(this), d3.select(this.parentNode));
-                updateLegendScale(library, i);
-                updateColorScale(library, i);
-            })
-            .on("mouseover", function() {
-                if (d3.select(this).select("rect").attr("fill") != pressedColor) {
-                d3.select(this)
-                    .select("rect")
-                    .attr("fill",hoverColor);
-                }
-            })
-            .on("mouseout", function() {
-                if (d3.select(this).select("rect").attr("fill") != pressedColor) {
-                    d3.select(this)
-                        .select("rect")
-                        .attr("fill",defaultColor);
-                }
-            })
+  var defaultColor= "#7777BB";
+  var hoverColor= "#0000ff";
+  var pressedColor= "#000077";
 
-    function updateButtonColors(button, parent) {
-                parent.selectAll("rect")
-                        .attr("fill",defaultColor);
+  var min;
+  var max;
 
-                button.select("rect")
-                        .attr("fill",pressedColor);
+  //groups for each button (which will hold a rect and text)
+  var buttonGroups= allButtons.selectAll("g.button")
+      .data(labels)
+      .enter()
+      .append("g")
+      .attr("class","button")
+      .style("cursor","pointer")
+          .on("click",function(d,i) {
+              updateButtonColors(d3.select(this), d3.select(this.parentNode));
+              updateLegendScale(library, i);
+              updateColorScale(library, i);
+          })
+          .on("mouseover", function() {
+              if (d3.select(this).select("rect").attr("fill") != pressedColor) {
+              d3.select(this)
+                  .select("rect")
+                  .attr("fill",hoverColor);
+              }
+          })
+          .on("mouseout", function() {
+              if (d3.select(this).select("rect").attr("fill") != pressedColor) {
+                  d3.select(this)
+                      .select("rect")
+                      .attr("fill",defaultColor);
+              }
+          })
+
+  function updateButtonColors(button, parent) {
+              parent.selectAll("rect")
+                      .attr("fill",defaultColor);
+
+              button.select("rect")
+                      .attr("fill",pressedColor);
+  }
+
+  var bWidth= 100; //button width
+  var bHeight= 40; //button height
+  var bSpace= 20; //space between buttons
+  var x0= 100; //x offset
+  var y0= 10; //y offset
+
+  buttonGroups.append("rect")
+                      .attr("class","buttonRect")
+                      .attr("width",bWidth)
+                      .attr("height",bHeight)
+                      .attr("x",function(d,i) {return x0+(bWidth+bSpace)*i;})
+                      .attr("y",y0)
+                      .attr("rx",5) //rx and ry give the buttons rounded corners
+                      .attr("ry",5)
+                      .attr("fill",defaultColor);
+
+  buttonGroups.append("text")
+                      .attr("class","buttonText")
+                      .attr("x",function(d,i) {
+                          return x0 + (bWidth+bSpace)*i + bWidth/2;
+                      })
+                      .attr("y",y0+bHeight/2)
+                      .attr("text-anchor","middle")
+                      .attr("dominant-baseline","central")
+                      .attr("fill","white")
+                      .text(function(d) {return d;});
+
+  domainMap = {};
+
+  dataset.columns.forEach(function(column) 
+  {
+    if(column=="checkouts" || column =="publicationyear" || column == "checkoutmonth" || column=="checkoutyear")
+    {
+        domainMap[column] = d3.extent(dataset, function(data_element)
+        {
+          if (column== "checkouts" || column == "checkoutmonth")
+          {
+            return Number(data_element[column]);
+          }
+
+          else if(data_element[column]!='' && column=="publicationyear")
+          {
+            return Number(parseTime(data_element[column]));
+          }
+          else if(column=="checkoutyear")
+          {
+            return Number(data_element[column]);
+          }
+        });
     }
+  });
 
-
-    var bWidth= 100; //button width
-    var bHeight= 40; //button height
-    var bSpace= 20; //space between buttons
-    var x0= 100; //x offset
-    var y0= 10; //y offset
-
-    buttonGroups.append("rect")
-                        .attr("class","buttonRect")
-                        .attr("width",bWidth)
-                        .attr("height",bHeight)
-                        .attr("x",function(d,i) {return x0+(bWidth+bSpace)*i;})
-                        .attr("y",y0)
-                        .attr("rx",5) //rx and ry give the buttons rounded corners
-                        .attr("ry",5)
-                        .attr("fill",defaultColor);
-
-    buttonGroups.append("text")
-                        .attr("class","buttonText")
-                        .attr("x",function(d,i) {
-                            return x0 + (bWidth+bSpace)*i + bWidth/2;
-                        })
-                        .attr("y",y0+bHeight/2)
-                        .attr("text-anchor","middle")
-                        .attr("dominant-baseline","central")
-                        .attr("fill","white")
-                        .text(function(d) {return d;});
+  chartScales = {x: 'checkoutyear', y: 'checkouts'};
   updateChart();
 
 });
@@ -165,41 +196,154 @@ d3.csv('./library.csv', function(error, dataset) {
 
 function updateChart() {
 
-  var simulation = d3.forceSimulation(library)
-    .force("x", d3.forceX(function(d) { return xScale(d['checkoutyear']); }).strength(1))
-    .force("y", d3.forceY(function(d) { return yScale(d['checkouts']); }))
-    .force("collide", d3.forceCollide(4))
-    .stop();
+  //Updating Y-axis scale based on User Input
+  if(chartScales.y=="publicationyear" || chartScales.y=="checkoutyear")
+  {
+      yScale=d3.scaleTime();
+      yScale.domain(domainMap[chartScales.y]); 
+      yScale.range([chartHeight-20, 0]);    
+  }
+  else if (chartScales.y=="usageclass" || chartScales.y=="materialtype")
+  {      
+      yScale=d3.scaleOrdinal();
 
-  for (var i = 0; i < 200; ++i) simulation.tick();
+      if(chartScales.y=="materialtype")
+      {
+        yScale.domain(['BOOK','EBOOK','MIXED','REGPRINT','MAGAZINE','SOUNDDISC','SONG','VIDEODISC'])
+              .range([chartHeight-20,(chartHeight-20)/7, 2*(chartHeight-20)/7, 3*(chartHeight-20)/7, 4*(chartHeight-20)/7, 5*(chartHeight-20)/7, 6*(chartHeight-20)/7, 0]);  
+      } 
+      else
+      {
+        yScale.domain(['PHYSICAL','DIGITAL']);
+        yScale.range([(chartHeight-20)/7, 6*(chartHeight)/7]);
+      }
+  }           
+  else if (chartScales.y=="checkouts" || chartScales.y == "checkoutmonth")
+  {
+      yScale = d3.scaleLinear(); 
+      //console.log(domainMap[chartScales.y]);
+      yScale.domain(domainMap[chartScales.y]);
+      yScale.range([chartHeight-20, 0]);
+  }
+
+  //Updating X-axis scale based on User Input
+  if(chartScales.x=="publicationyear" || chartScales.x=="checkoutyear")
+  {
+      xScale=d3.scaleTime();
+      xScale.domain(domainMap[chartScales.x])
+            .range([20, chartWidth]);    
+  }
+  else if (chartScales.x=="usageclass" || chartScales.x=="materialtype")
+  {      
+      xScale=d3.scaleOrdinal();
+
+      if(chartScales.x=="materialtype")
+      {
+        xScale.domain(['BOOK','SONG','SOUNDDISC','MAGAZINE','REGPRINT','MIXED','EBOOK','VIDEODISC'])
+              .range([60, 60 + (chartWidth-60)/7, 60+(2*(chartWidth-60))/7, 60+(3*(chartWidth-60))/7, 60+(4*(chartWidth-60))/7, 60+(5*(chartWidth-60))/7, 60+(6*(chartWidth-60))/7, chartWidth]);  
+      } 
+      else
+      {
+        xScale.domain(['DIGITAL', 'PHYSICAL']);
+        xScale.range([ chartWidth/7, 6*(chartWidth)/7]);
+      }
+  }           
+  else if (chartScales.x=="checkouts" || chartScales.x == "checkoutmonth")
+  {
+      xScale = d3.scaleLinear(); 
+      xScale.domain(domainMap[chartScales.x])
+             .range([20, chartWidth]);
+  }
+   
+ yAxisG.transition()
+  .duration(800)
+  .call(d3.axisLeft(yScale));
+
+xAxisG.transition()
+  .duration(800)
+  .call(d3.axisBottom(xScale));
 
 
+var simulation = d3.forceSimulation(library)
+  .force("x", d3.forceX(function(d) { 
+          if(chartScales.x!="publicationyear")
+            return xScale(d[chartScales.x]);
+          else
+            return xScale(parseTime(d[chartScales.x]));
+        }).strength(1)
+  )
+  .force("y", d3.forceY(function(d) { 
+          if(chartScales.y!="publicationyear")
+            return yScale(d[chartScales.y]);
+          else
+            return yScale(parseTime(d[chartScales.y]));
+        }).strength(1)
+  )
+  .force("collide", d3.forceCollide(5))
+  .stop();
 
-  var circle = chartG.selectAll("circle")
-    .data(library)
-    .enter()
-    .append("circle")
-    .attr('cx', function(d) {
-      return d.x;
-    })
-    .attr('cy', function(d) {
-      return d.y;
-    })
+  for (var i = 0; i < 30; ++i) 
+    {
+        simulation.tick();
+    }
+
+  var titles = chartG.selectAll('.title')
+    .data(library);
+
+  var titlesEnter = titles.enter()
+    .append('g')
+    .attr('class', 'title')
+    .attr('transform', function(d) 
+    {    
+       if(chartScales.x!="publicationyear" && chartScales.x!="usageclass")
+          {
+            var tx = xScale(d[chartScales.x]);
+          }
+        else if (chartScales.x=="publicationyear")
+          {
+            var tx = xScale(parseTime(d[chartScales.x]));
+          }
+        else if (chartScales.x == "usageclass")
+          {
+            var tx = xScale(d[chartScales.x]);
+            console.log(d[chartScales.x]);
+            console.log(xScale(d[chartScales.x])); 
+          }
+        
+        if(chartScales.y!="publicationyear")
+          {
+            var ty = yScale(d[chartScales.y]);
+          }
+        else if (chartScales.y=="publicationyear")
+          {
+            var ty = yScale(parseTime(d[chartScales.y]));
+          }
+        return 'translate('+[tx, ty]+')';
+    });
+    
+  titlesEnter.append('circle')
     .attr('r', 4)
     .attr('fill', function(d) {
       return materialColors[d.materialtype];
     })
-    .attr('fill-opacity', '0.5')
+    .attr('fill-opacity', '0.7')
     .on("mouseover", handleMouseOver)
     .on("mouseout", handleMouseOut)
     .on("click", handleMouseClick);
-}
 
+  titles.merge(titlesEnter)
+    .transition()
+    .duration(3000)
+    .attr('transform', function(d) {
+        return 'translate('+[d.x, d.y]+')';
+    });
+
+}
 
 function handleMouseClick(d, i) {
   updateHeatmap(d.title);
-  console.log("Hi, I am previous i", prevI, "and this is current i", i,
-  "and I am second click", secondClick);
+  //console.log("Hi, I am previous i", prevI, "and this is current i", i,
+  //"and I am second click", secondClick);
   if (i != prevI) {
        tempD = prevD;
        tempI = prevI;
@@ -216,41 +360,44 @@ function handleMouseClick(d, i) {
       return handleClickOut(d, i, d, i);
     }
   }
+
 }
 
 function updateColorScale(dataset, i) {
-    var colorScale;
-    var normalizedValue;
-    var min;
-    var max;
-    
-    
-    chartG.selectAll('circle')
-            .transition().duration(1000)
-            .attr('fill', function(d) {
-                if(i == 0) {
-                    if(d.materialtype=="MAGAZINE") {
-                        return 'gray';
-                    }
-                     return yearColors[d.publicationyear];
-                } else if (i == 1) {
-                    colorScale = d3.scaleSequential(d3.interpolateCool);
-                    max = d3.max(dataset, function(d){return +d.checkoutmonth;});
-                    min = d3.min(dataset, function(d){return +d.checkoutmonth;});
-                    normalizedValue = (+d.checkoutmonth - min) / (max - min);
-                    return colorScale(normalizedValue);
-                } else if (i == 2){
-                    if(d.usageclass == "Digital") {
-                        return 'white';
-                    } else {
-                        return '#7777BB';
-                    }
-                } else if (i == 3){
-                     return materialColors[d.materialtype];
-                }
 
-            })
-            .transition().duration(2000);
+  var colorScale;
+  var normalizedValue;
+  var min;
+  var max;
+
+      
+  chartG.selectAll('circle')
+              .transition().duration(1000)
+              .attr('fill', function(d) {
+                  if(i == 0) {
+                      if(d.materialtype=="MAGAZINE") {
+                          return 'gray';
+                      }
+                       return yearColors[d.publicationyear];
+                  } else if (i == 1) {
+                      colorScale = d3.scaleSequential(d3.interpolateCool);
+                      max = d3.max(dataset, function(d){return +d.checkoutmonth;});
+                      min = d3.min(dataset, function(d){return +d.checkoutmonth;});
+                      normalizedValue = (+d.checkoutmonth - min) / (max - min);
+                      return colorScale(normalizedValue);
+                  } else if (i == 2){
+                      if(d.usageclass == "Digital") {
+                          return 'white';
+                      } else {
+                          return '#7777BB';
+                      }
+                  } else if (i == 3){
+                       return materialColors[d.materialtype];
+                  }
+
+              })
+              .transition().duration(2000);
+
 }
 
 var svgLegend = d3.select("svg");
@@ -301,8 +448,7 @@ function monthScale() {
     .scale(sequentialScale); 
 
     svgLegend.select(".legendMonth")
-    .call(legendSequential);
-   
+    .call(legendSequential);  
 }
 
 function yearScale() {
@@ -381,4 +527,20 @@ function materialScale() {
 
     svgLegend.select(".legendMaterial")
     .call(legendOrdinal);
+}
+
+function onYScaleChanged() {
+    var select = d3.select('#yScaleSelect').node();
+    // Get current value of select element, save to global chartScales
+    chartScales.y = select.options[select.selectedIndex].value
+    // Update chart
+    updateChart();
+}
+
+function onXScaleChanged() {
+    var select = d3.select('#xScaleSelect').node();
+    // Get current value of select element, save to global chartScales
+    chartScales.x = select.options[select.selectedIndex].value
+    // Update chart
+    updateChart();
 }

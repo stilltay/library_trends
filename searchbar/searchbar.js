@@ -2,8 +2,8 @@
 //code is copied from https://www.w3schools.com/howto/howto_js_autocomplete.asp
 var creators = []
 d3.csv('../scatterplot_begins/library.csv', function(error, dataset) {
-  console.log("does this work??");
-  console.log("This is dataset yay", dataset);
+  //console.log("does this work??");
+  //console.log("This is dataset yay", dataset);
   for (entry in dataset) {
     if (entry != "columns"){
       var creator = dataset[entry].creator
@@ -24,17 +24,17 @@ d3.csv('../scatterplot_begins/library.csv', function(error, dataset) {
 
 
 function autocomplete(inp) {
-  console.log("Hi, i've entered autocomplete.");
+  //console.log("Hi, i've entered autocomplete.");
   arr = creators
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus;
   var userinput= document.getElementById("myInput").value;
-    console.log(userinput);
+  //console.log(userinput);
   /*execute a function when someone writes in the text field:*/
-  console.log("imp", inp);
+  //console.log("imp", inp);
   inp.addEventListener("input", function(e) {
-      console.log("Eventlistener first one)");
+      //console.log("Eventlistener first one)");
       var a, b, i, val = this.value;
       /*close any already open lists of autocompleted values*/
       closeAllLists();
@@ -75,7 +75,7 @@ function autocomplete(inp) {
   });
   /*execute a function presses a key on the keyboard:*/
   inp.addEventListener("keydown", function(e) {
-    console.log("Eventlistener");
+    //console.log("Eventlistener");
       var x = document.getElementById(this.id + "autocomplete-list");
       if (x) x = x.getElementsByTagName("div");
       if (e.keyCode == 40) {

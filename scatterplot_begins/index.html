@@ -14,6 +14,22 @@
         </tr>
         <tr>
           <div id="toolbar" width = "1800" height="50"></div>
+          <select class="custom-select small" id="yScaleSelect" onchange="onYScaleChanged()">
+              <option value="publicationyear">publication year</option>
+              <option value="checkoutmonth">checkout month</option>
+              <option value="usageclass">usage class</option>
+              <option selected value="checkouts">checkouts</option>
+              <option value="materialtype">material type</option>
+              <option value="checkoutyear">checkout year</option>
+            </select>
+            <select class="custom-select small" id="xScaleSelect" onchange="onXScaleChanged()">
+              <option value="publicationyear">publication year</option>
+              <option value="checkoutmonth">checkout month</option>
+              <option value="usageclass">usage class</option>
+              <option value="checkouts">checkouts</option>
+              <option value="materialtype">material type</option>
+              <option selected value="checkoutyear">checkout year</option>
+            </select>
         </tr>
         <tr>
           <td>
@@ -35,8 +51,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
-
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
 <script src="./library.js"></script>
