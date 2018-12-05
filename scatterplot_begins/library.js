@@ -55,26 +55,6 @@ d3.csv('./library.csv', function(error, dataset) {
     //d.publicationyear = parseTime(d.publicationyear);
   });
 
-/*
-  var yearsExtent = d3.extent(library, function(d) {
-      //console.log(Number(d['checkoutyear']));
-      return Number(d['checkoutyear']);
-  });
-
-  xScale = d3.scaleTime()
-    .domain(yearsExtent)
-      .rangeRound([20, chartWidth]);
-
-
-  var xAxis = d3.axisBottom(xScale);
-
-  svg.append('g')
-    .attr('class', 'x-axis')
-    .attr('transform', 'translate(70,720)')
-    .attr('stroke', 'white')
-    .call(xAxis);
-*/
-
   svg.append('text')
     	.attr('class', 'x-label')
     	.attr('transform', 'translate(850, 790)')
@@ -226,8 +206,8 @@ function updateChart() {
   if(chartScales.y=="publicationyear" || chartScales.y=="checkoutyear")
   {
       yScale=d3.scaleTime();
-      yScale.domain(domainMap[chartScales.y]);
-      yScale.range([chartHeight-20, 0]);
+      yScale.domain(domainMap[chartScales.y])
+            .range([chartHeight-20, 0]);
   }
   else if (chartScales.y=="usageclass" || chartScales.y=="materialtype")
   {
@@ -240,16 +220,15 @@ function updateChart() {
       }
       else
       {
-        yScale.domain(['PHYSICAL','DIGITAL']);
-        yScale.range([(chartHeight-20)/7, 6*(chartHeight)/7]);
+        yScale.domain(['PHYSICAL','DIGITAL'])
+              .range([(chartHeight-20)/7, 6*(chartHeight)/7]);
       }
   }
   else if (chartScales.y=="checkouts" || chartScales.y == "checkoutmonth")
   {
       yScale = d3.scaleLinear();
-      //console.log(domainMap[chartScales.y]);
-      yScale.domain(domainMap[chartScales.y]);
-      yScale.range([chartHeight-20, 0]);
+      yScale.domain(domainMap[chartScales.y])
+            .range([chartHeight-20, 0]);
   }
 
   //Updating X-axis scale based on User Input
@@ -270,15 +249,14 @@ function updateChart() {
       }
       else
       {
-        xScale.domain(['DIGITAL', 'PHYSICAL']);
-        xScale.range([ chartWidth/7, 6*(chartWidth)/7]);
+        xScale.domain(['PHYSICAL','DIGITAL']);
+        xScale.range([chartWidth/7, 6*(chartWidth/7)]);
       }
   }
   else if (chartScales.x=="checkouts" || chartScales.x == "checkoutmonth")
   {
       xScale = d3.scaleLinear();
-      //console.log(domainMap[chartScales.y]);
-      xScale.domain(domainMap[chartScales.y])
+      xScale.domain(domainMap[chartScales.x])
              .range([20, chartWidth]);
   }
 
@@ -293,14 +271,14 @@ xAxisG.transition()
 
 var simulation = d3.forceSimulation(library)
   .force("x", d3.forceX(function(d) {
-          if(chartScales.x!="publicationyear" && chartScales.x!="checkoutyear ")
+          if(chartScales.x!="publicationyear")
             return xScale(d[chartScales.x]);
           else
             return xScale(parseTime(d[chartScales.x]));
         }).strength(1)
   )
   .force("y", d3.forceY(function(d) {
-          if(chartScales.y!="publicationyear" && chartScales.y!="checkoutyear ")
+          if(chartScales.y!="publicationyear")
             return yScale(d[chartScales.y]);
           else
             return yScale(parseTime(d[chartScales.y]));
@@ -310,7 +288,7 @@ var simulation = d3.forceSimulation(library)
 
   .stop();
 
-  for (var i = 0; i < 50; ++i)
+  for (var i = 0; i < 30; ++i)
     {
         simulation.tick();
     }
@@ -355,7 +333,17 @@ var simulation = d3.forceSimulation(library)
 
   titles.merge(titlesEnter)
     .transition()
-    .duration(3000)
+    .duration(function()
+              {
+                if(chartScales.x=="usageclass" && chartScales.y=="usageclass")
+                {
+                  return 5000;
+                }
+                else
+                {
+                  return 3000;
+                }
+              })                
     .attr('transform', function(d) {
         return 'translate('+[d.x, d.y]+')';
     });
@@ -395,7 +383,7 @@ function updateColorScale(dataset, i) {
 
   chartG.selectAll('circle')
               .transition().duration(1000)
-							.attr('opacity', .5)
+							.attr('fill-opacity', 0.7)
 							.attr('r', 4)
               .attr('fill', function(d) {
                   if(i == 0) {
