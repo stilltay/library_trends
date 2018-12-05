@@ -352,8 +352,21 @@ var simulation = d3.forceSimulation(library)
 
 function handleMouseClick(d, i) {
   updateHeatmap(d.title);
-  //console.log("Hi, I am previous i", prevI, "and this is current i", i,
-  //"and I am second click", secondClick);
+  
+     var type;
+    var name;
+
+    if(d.materialtype == "BOOK" || d.materialType == "EBOOK" || d.materialType == "SONG") {
+        type = "creator";
+        name = d.creator;
+    } else {
+        type = "publisher";
+        name = d.publisher;
+    }
+    
+    updateCreatorChart(type, name);
+    
+    
   if (i != prevI) {
        tempD = prevD;
        tempI = prevI;
