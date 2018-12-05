@@ -24,6 +24,7 @@ var sy = 225; // subjects y variable
 var text2 = 310;
 var chart2start = 400;
 var keepGoing = false;
+var prevColor ='';
 
 var months = {1: 'Jan.', 2: 'Feb.', 3: 'Mar.', 4: 'Apr.', 5: 'May', 6: 'June',
   7: 'July', 8: 'Aug.', 9: 'Sept.', 10: 'Oct.', 11: 'Nov.', 12: 'Dec.'}
@@ -258,6 +259,13 @@ function handleMouseOver(d, i) {
          .style("fill", "#ffffff")
          .text(d.subjects)
          .call(wrap, 150);
+
+   var hovered = d3.select(this);
+   // add hovered class to style the group
+   hovered.classed('hovered', true);
+   prevColor = hovered.attr('fill');
+   hovered.attr('fill', 'white');
+    // highlightSelection(d.title);
 }
 
 //MOUSEOUT function
@@ -271,6 +279,11 @@ function handleMouseOut(d, i) {
   d3.select("#" + "py" + i).remove();
   d3.select("#" + "u" + i).remove();
   d3.select("#" + "s" + i).remove();
+
+  var hovered = d3.select(this);
+   hovered.classed('hovered', false);
+   hovered.attr('fill', prevColor);
+  // updateColorScale(getDataset(),getColorScaleIndex());
 }
 
 //ON-CLICK function
@@ -362,6 +375,7 @@ function tooltipClickIn(d, i) {
          .text(d.subjects)
          .call(wrap, 150);
 
+
 }
 
 //CLICKOUT function
@@ -377,8 +391,12 @@ function handleClickOut(d, i, d2, i2) {
   d3.select("#" + "cs" + i).remove();
   if (d2 != null) {
       tooltipClickIn(d2, i2);
+      highlightSelection(d2.title);
+  } else {
+    updateColorScale(getDataset(),getColorScaleIndex());
   }
 }
+
 //borrowed this wrap function because d3plus plugin for wrapping text was not working
 function wrap(text, width) {
     text.each(function () {

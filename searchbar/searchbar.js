@@ -1,40 +1,41 @@
 
 //code is copied from https://www.w3schools.com/howto/howto_js_autocomplete.asp
-var creators = []
+var items = [];
 d3.csv('../scatterplot_begins/library.csv', function(error, dataset) {
-  console.log("does this work??");
-  console.log("This is dataset yay", dataset);
   for (entry in dataset) {
     if (entry != "columns"){
-      var creator = dataset[entry].creator
-      var title = dataset[entry].title
-      if (creator != "" && !creators.includes(creator)) {
-        creators.push(creator)
+      var creator = dataset[entry].creator;
+      var title = dataset[entry].title;
+      var publisher = dataset[entry].publisher;
+      if (creator != "" && !items.includes(creator)) {
+        items.push(creator);
+      } else if (title != '' && !items.includes(title)) {
+        items.push(title);
+      } else if (publisher != '' && !items.includes(publisher)) {
+        items.push(publisher);
       }
-      if (title != "" && !creators.includes(title.slice(0,40))) {
-        creators.push(title.slice(0,40))
-      }
+      // if (title != "" && !creators.includes(title.slice(0,40))) {
+      //   creators.push(title.slice(0,40))
+      // }
     }
   }
 })
-//
-// var string = creators,
-//     substring = userinput;
-// string.includes(substring);
+
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
 
 
 function autocomplete(inp) {
-  console.log("Hi, i've entered autocomplete.");
-  arr = creators
+  arr = items;
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus;
   var userinput= document.getElementById("myInput").value;
-    console.log(userinput);
   /*execute a function when someone writes in the text field:*/
-  console.log("imp", inp);
   inp.addEventListener("input", function(e) {
-      console.log("Eventlistener first one)");
       var a, b, i, val = this.value;
       /*close any already open lists of autocompleted values*/
       closeAllLists();
@@ -75,7 +76,6 @@ function autocomplete(inp) {
   });
   /*execute a function presses a key on the keyboard:*/
   inp.addEventListener("keydown", function(e) {
-    console.log("Eventlistener");
       var x = document.getElementById(this.id + "autocomplete-list");
       if (x) x = x.getElementsByTagName("div");
       if (e.keyCode == 40) {
@@ -123,8 +123,16 @@ function autocomplete(inp) {
       if (elmnt != x[i] && elmnt != inp) {
       x[i].parentNode.removeChild(x[i]);
     }
+    input1 = inp.value;
+    highlightSelection(inp.value);
+    console.log("This is hopefully the title I clicked on", inp.value);
   }
+
 }
+
+// function getInput() {
+//   return inp.value;
+// }
 /*execute a function when someone clicks in the document:*/
 document.addEventListener("click", function (e) {
     closeAllLists(e.target);
