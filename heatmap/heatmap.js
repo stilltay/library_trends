@@ -1,12 +1,13 @@
 var margin = {top:50, right:0, bottom:100, left:100},
 		width=960-margin.left-margin.right,
 		height=630-margin.top-margin.bottom,
-		gridSize=Math.floor(width/24),
-		legendElementWidth=gridSize*2.665,
+		gridSize=Math.floor(width/24), //35
+		legendElementWidth=gridSize*2.665, //93.275
 		buckets = 10,
 		colors = ["#f7fcf0","#e0f3db","#ccebc5","#a8ddb5","#7bccc4","#4eb3d3","#2b8cbe","#0868ac","#084081"],
         days = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
 	   times = ["2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"];
+   
 
 	var heatmap;
 	var legend;
@@ -46,7 +47,7 @@ var margin = {top:50, right:0, bottom:100, left:100},
         .style("fill", "white")
         .style("font-size", "18px")
     	.text('Frequency of Checkouts per Month/Year for <select item above>');
-    
+
 
 function updateHeatmap(newTitle){
 
@@ -81,13 +82,13 @@ function updateHeatmap(newTitle){
 		var heatMap = svgHM.selectAll(".hour")
 				.data(dataset)
 				.enter().append("rect")
-				.attr("x", function(d) {return (d.checkoutyear-2005) * gridSize;})
-				.attr("y", function(d) {return (d.checkoutmonth-1) * gridSize;})
+				.attr("x", function(d) {return (d.checkoutyear-2005) * 35;})
+				.attr("y", function(d) {return (d.checkoutmonth-1) * 35;})
 				.attr("rx", 0)
 				.attr("ry", 0)
 				.attr("class", "hour")
-				.attr("width", gridSize)
-				.attr("height", gridSize)
+				.attr("width", 35)
+				.attr("height", 35)
 				.style("fill", colors[0])
                 .style("stroke", "white")
                 .style("stroke-opacity", 0.6);
@@ -115,17 +116,17 @@ function updateHeatmap(newTitle){
 				.attr("class", "legend");
 
 			legend.append("rect")
-				.attr("x", function(d, i){ return legendElementWidth * i;})
+				.attr("x", function(d, i){ return 93.275 * i;})
 				.attr("y", height)
-				.attr("width", legendElementWidth)
-				.attr("height", gridSize/2)
+				.attr("width", 93.275)
+				.attr("height", 35/2)
 				.style("fill", function(d, i) {return colors[i]; });
 
 			legend.append("text")
 				.attr("class", "mono")
 				.text(function(d) {return "≥ "+d.toString().substr(0,4);})
-				.attr("x", function(d, i){ return legendElementWidth *i;})
-				.attr("y", height+ gridSize)
+				.attr("x", function(d, i){ return 93.275 *i;})
+				.attr("y", height+ 35)
                 .style("fill", "white");
         
 			heatMap.exit().remove();
