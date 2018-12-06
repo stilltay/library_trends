@@ -10,8 +10,15 @@
   justify-content: center;
 }
 
-
 .col {
+  flex: 1;
+}
+
+#col1 {
+  flex: 0, 0, 170;
+}
+
+.col1 {
   flex: 0, 0, 170;
 }
 .col2 {
@@ -19,6 +26,12 @@
 }
 .col3 {
   flex: 0, 0, 1020;
+}
+.col4 {
+  flex: 0, 0, 1440;
+}
+.col5 {
+  flex: 0, 0, 200;
 }
 
 select {
