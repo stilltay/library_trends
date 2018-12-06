@@ -72,7 +72,7 @@ function updateHeatmap(newTitle){
         });
         dataset = data;
 
-        console.log(dataset);
+        //console.log(dataset);
 
 		var colorScale = d3.scaleQuantile()
 			.domain([0, (d3.max(data, function(d){return d.checkouts;})/2), d3.max(data, function(d){return d.checkouts;})])
