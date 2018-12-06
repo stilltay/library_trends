@@ -55,26 +55,6 @@ d3.csv('./library.csv', function(error, dataset) {
     //d.publicationyear = parseTime(d.publicationyear);
   });
 
-/*
-  var yearsExtent = d3.extent(library, function(d) {
-      //console.log(Number(d['checkoutyear']));
-      return Number(d['checkoutyear']);
-  });
-
-  xScale = d3.scaleTime()
-    .domain(yearsExtent)
-      .rangeRound([20, chartWidth]);
-
-
-  var xAxis = d3.axisBottom(xScale);
-
-  svg.append('g')
-    .attr('class', 'x-axis')
-    .attr('transform', 'translate(70,720)')
-    .attr('stroke', 'white')
-    .call(xAxis);
-*/
-
   svg.append('text')
     	.attr('class', 'x-label')
     	.attr('transform', 'translate(850, 790)')
@@ -208,7 +188,7 @@ function highlightSelection(search) {
       if (search === d.title || search === d.publisher || search === d.creator) {
         return "1";
       } else {
-        return ".5";
+        return ".7";
       }
     })
     .attr('r', function(d) {
@@ -222,180 +202,191 @@ function highlightSelection(search) {
 
 function updateChart() {
 
-  //Updating Y-axis scale based on User Input
-  if(chartScales.y=="publicationyear" || chartScales.y=="checkoutyear")
-  {
-      yScale=d3.scaleTime();
-      yScale.domain(domainMap[chartScales.y]);
-      yScale.range([chartHeight-20, 0]);
-  }
-  else if (chartScales.y=="usageclass" || chartScales.y=="materialtype")
-  {
-      yScale=d3.scaleOrdinal();
-
-      if(chartScales.y=="materialtype")
-      {
-        yScale.domain(['BOOK','EBOOK','MIXED','REGPRINT','MAGAZINE','SOUNDDISC','SONG','VIDEODISC'])
-              .range([chartHeight-20,(chartHeight-20)/7, 2*(chartHeight-20)/7, 3*(chartHeight-20)/7, 4*(chartHeight-20)/7, 5*(chartHeight-20)/7, 6*(chartHeight-20)/7, 0]);
-      }
-      else
-      {
-        yScale.domain(['PHYSICAL','DIGITAL']);
-        yScale.range([(chartHeight-20)/7, 6*(chartHeight)/7]);
-      }
-  }
-  else if (chartScales.y=="checkouts" || chartScales.y == "checkoutmonth")
-  {
-      yScale = d3.scaleLinear();
-      //console.log(domainMap[chartScales.y]);
-      yScale.domain(domainMap[chartScales.y]);
-      yScale.range([chartHeight-20, 0]);
-  }
-
-  //Updating X-axis scale based on User Input
-  if(chartScales.x=="publicationyear" || chartScales.x=="checkoutyear")
-  {
-      xScale=d3.scaleTime();
-      xScale.domain(domainMap[chartScales.x])
-            .range([20, chartWidth]);
-  }
-  else if (chartScales.x=="usageclass" || chartScales.x=="materialtype")
-  {
-      xScale=d3.scaleOrdinal();
-
-      if(chartScales.x=="materialtype")
-      {
-        xScale.domain(['BOOK','SONG','SOUNDDISC','MAGAZINE','REGPRINT','MIXED','EBOOK','VIDEODISC'])
-              .range([60, 60 + (chartWidth-60)/7, 60+(2*(chartWidth-60))/7, 60+(3*(chartWidth-60))/7, 60+(4*(chartWidth-60))/7, 60+(5*(chartWidth-60))/7, 60+(6*(chartWidth-60))/7, chartWidth]);
-      }
-      else
-      {
-        xScale.domain(['DIGITAL', 'PHYSICAL']);
-        xScale.range([ chartWidth/7, 6*(chartWidth)/7]);
-      }
-  }
-  else if (chartScales.x=="checkouts" || chartScales.x == "checkoutmonth")
-  {
-      xScale = d3.scaleLinear();
-      //console.log(domainMap[chartScales.y]);
-      xScale.domain(domainMap[chartScales.y])
-             .range([20, chartWidth]);
-  }
-
- yAxisG.transition()
-  .duration(800)
-  .call(d3.axisLeft(yScale));
-
-xAxisG.transition()
-  .duration(800)
-  .call(d3.axisBottom(xScale));
-
-
-var simulation = d3.forceSimulation(library)
-  .force("x", d3.forceX(function(d) {
-          if(chartScales.x!="publicationyear" && chartScales.x!="checkoutyear ")
-            return xScale(d[chartScales.x]);
-          else
-            return xScale(parseTime(d[chartScales.x]));
-        }).strength(1)
-  )
-  .force("y", d3.forceY(function(d) {
-          if(chartScales.y!="publicationyear" && chartScales.y!="checkoutyear ")
-            return yScale(d[chartScales.y]);
-          else
-            return yScale(parseTime(d[chartScales.y]));
-        }).strength(1)
-  )
-  .force("collide", d3.forceCollide(5))
-
-  .stop();
-
-  for (var i = 0; i < 50; ++i)
-    {
-        simulation.tick();
-    }
-
-  var titles = chartG.selectAll('.title')
-    .data(library);
-
-  var titlesEnter = titles.enter()
-    .append('g')
-    .attr('class', 'title')
-    .attr('transform', function(d)
-    {
-       if(chartScales.x!="publicationyear")
+          //Updating Y-axis scale based on User Input
+          if(chartScales.y=="publicationyear" || chartScales.y=="checkoutyear")
           {
-            var tx = xScale(d[chartScales.x]);
+              yScale=d3.scaleTime();
+              yScale.domain(domainMap[chartScales.y]);
+              yScale.range([chartHeight-20, 0]);
           }
-        else if (chartScales.x=="publicationyear")
+          else if (chartScales.y=="usageclass" || chartScales.y=="materialtype")
           {
-            var tx = xScale(parseTime(d[chartScales.x]));
+              yScale=d3.scaleOrdinal();
+
+              if(chartScales.y=="materialtype")
+              {
+                yScale.domain(['BOOK','EBOOK','MIXED','REGPRINT','MAGAZINE','SOUNDDISC','SONG','VIDEODISC'])
+                      .range([chartHeight-20,(chartHeight-20)/7, 2*(chartHeight-20)/7, 3*(chartHeight-20)/7, 4*(chartHeight-20)/7, 5*(chartHeight-20)/7, 6*(chartHeight-20)/7, 0]);
+              }
+              else
+              {
+                yScale.domain(['PHYSICAL','DIGITAL']);
+                yScale.range([(chartHeight-20)/7, 6*(chartHeight)/7]);
+              }
+          }
+          else if (chartScales.y=="checkouts" || chartScales.y == "checkoutmonth")
+          {
+              yScale = d3.scaleLinear();
+              //console.log(domainMap[chartScales.y]);
+              yScale.domain(domainMap[chartScales.y]);
+              yScale.range([chartHeight-20, 0]);
           }
 
-        if(chartScales.y!="publicationyear")
+          //Updating X-axis scale based on User Input
+          if(chartScales.x=="publicationyear" || chartScales.x=="checkoutyear")
           {
-            var ty = yScale(d[chartScales.y]);
+              xScale=d3.scaleTime();
+              xScale.domain(domainMap[chartScales.x])
+                    .range([20, chartWidth]);
           }
-        else if (chartScales.y=="publicationyear")
+          else if (chartScales.x=="usageclass" || chartScales.x=="materialtype")
           {
-            var ty = yScale(parseTime(d[chartScales.y]));
+              xScale=d3.scaleOrdinal();
+
+              if(chartScales.x=="materialtype")
+              {
+                xScale.domain(['BOOK','SONG','SOUNDDISC','MAGAZINE','REGPRINT','MIXED','EBOOK','VIDEODISC'])
+                      .range([60, 60 + (chartWidth-60)/7, 60+(2*(chartWidth-60))/7, 60+(3*(chartWidth-60))/7, 60+(4*(chartWidth-60))/7, 60+(5*(chartWidth-60))/7, 60+(6*(chartWidth-60))/7, chartWidth]);
+              }
+              else
+              {
+                xScale.domain(['PHYSICAL', 'DIGITAL']);
+                xScale.range([ chartWidth/7, 6*(chartWidth)/7]);
+              }
           }
-        return 'translate('+[tx, ty]+')';
-    });
+          else if (chartScales.x=="checkouts" || chartScales.x == "checkoutmonth")
+          {
+              xScale = d3.scaleLinear();
+              xScale.domain(domainMap[chartScales.x])
+                     .range([20, chartWidth]);
+          }
 
-  titlesEnter.append('circle')
-    .attr('r', 4)
-    .attr('fill', function(d) {
-      return materialColors[d.materialtype];
-    })
-    .attr('fill-opacity', '0.7')
-    .on("mouseover", handleMouseOver)
-    .on("mouseout", handleMouseOut)
-    .on("click", handleMouseClick);
+          yAxisG.transition()
+            .duration(800)
+            .call(d3.axisLeft(yScale));
 
-  titles.merge(titlesEnter)
-    .transition()
-    .duration(3000)
-    .attr('transform', function(d) {
-        return 'translate('+[d.x, d.y]+')';
-    });
+          xAxisG.transition()
+            .duration(800)
+            .call(d3.axisBottom(xScale));
+
+
+          var simulation = d3.forceSimulation(library)
+            .force("x", d3.forceX(function(d) {
+                    if(chartScales.x!="publicationyear" && chartScales.x!="checkoutyear ")
+                      return xScale(d[chartScales.x]);
+                    else
+                      return xScale(parseTime(d[chartScales.x]));
+                  }).strength(1)
+            )
+            .force("y", d3.forceY(function(d) {
+                    if(chartScales.y!="publicationyear" && chartScales.y!="checkoutyear ")
+                      return yScale(d[chartScales.y]);
+                    else
+                      return yScale(parseTime(d[chartScales.y]));
+                  }).strength(1)
+            )
+            .force("collide", d3.forceCollide(5))
+            .stop();
+
+          for (var i = 0; i < 30; ++i)
+            {
+                simulation.tick();
+            }
+
+          var titles = chartG.selectAll('.title')
+                             .data(library);
+
+          var titlesEnter = titles.enter()
+            .append('g')
+            .attr('class', 'title')
+            .attr('transform', function(d)
+            {
+               if(chartScales.x!="publicationyear")
+                  {
+                    var tx = xScale(d[chartScales.x]);
+                  }
+                else if (chartScales.x=="publicationyear")
+                  {
+                    var tx = xScale(parseTime(d[chartScales.x]));
+                  }
+
+                if(chartScales.y!="publicationyear")
+                  {
+                    var ty = yScale(d[chartScales.y]);
+                  }
+                else if (chartScales.y=="publicationyear")
+                  {
+                    var ty = yScale(parseTime(d[chartScales.y]));
+                  }
+                return 'translate('+[tx, ty]+')';
+            });
+
+            titlesEnter.append('circle')
+              .attr('r', 4)
+              .attr('fill', function(d) {
+                return materialColors[d.materialtype];
+              })
+              .attr('fill-opacity', '0.7')
+              .on("mouseover", handleMouseOver)
+              .on("mouseout", handleMouseOut)
+              .on("click", handleMouseClick);
+
+            titles.merge(titlesEnter)
+              .transition()
+              .duration( function(){
+                if(chartScales.x =="usageclass" || chartScales.y == "usageclass"){
+                  return 5000;
+                }
+                else
+                {
+                  return 3000;
+                }
+              })
+              .attr('transform', function(d) {
+                  return 'translate('+[d.x, d.y]+')';
+              });
 
 }
 
 function handleMouseClick(d, i) {
-  updateHeatmap(d.title);
-    
-    var type;
+  
+   updateHeatmap(d.title); 
+   var type;
    var name;
 
-   if(d.materialtype == "BOOK" || d.materialType == "EBOOK" || d.materialType == "SONG") {
+   if(d.materialtype == "BOOK" || d.materialType == "EBOOK" || d.materialType == "SONG") 
+   {
        type = "creator";
        name = d.creator;
-   } else {
+   } 
+   else 
+   {
        type = "publisher";
        name = d.publisher;
    }
 
-   updateCreatorChart(type, name);
-    
-  //console.log("Hi, I am previous i", prevI, "and this is current i", i,
-  //"and I am second click", secondClick);
-  if (i != prevI) {
+   updateCreatorChart(type, name); 
+    if (i != prevI) 
+    {
        tempD = prevD;
        tempI = prevI;
        prevD = d;
        prevI = i;
        return handleClickOut(tempD, tempI, prevD, prevI);
-  }
-  else {
-    if (secondClick == false) {
-      secondClick = true;
-      return handleClickOut(d, i);
-    } else {
-      secondClick = false;
-      return handleClickOut(d, i, d, i);
     }
-  }
+    else 
+    {
+      if (secondClick == false) 
+      {
+        secondClick = true;
+        return handleClickOut(d, i);
+      } 
+      else 
+      {
+        secondClick = false;
+        return handleClickOut(d, i, d, i);
+      }
+    }
 
 }
 
@@ -408,34 +399,33 @@ function updateColorScale(dataset, i) {
 
 
   chartG.selectAll('circle')
-              .transition().duration(1000)
-							.attr('opacity', .5)
-							.attr('r', 4)
-              .attr('fill', function(d) {
-                  if(i == 0) {
-                      if(d.materialtype=="MAGAZINE") {
-                          return 'gray';
-                      }
-                       return yearColors[d.publicationyear];
-                  } else if (i == 1) {
-                      colorScale = d3.scaleSequential(d3.interpolateCool);
-                      max = d3.max(dataset, function(d){return +d.checkoutmonth;});
-                      min = d3.min(dataset, function(d){return +d.checkoutmonth;});
-                      normalizedValue = (+d.checkoutmonth - min) / (max - min);
-                      return colorScale(normalizedValue);
-                  } else if (i == 2){
-                      if(d.usageclass == "Digital") {
-                          return 'white';
-                      } else {
-                          return '#7777BB';
-                      }
-                  } else if (i == 3){
-                       return materialColors[d.materialtype];
-                  }
+        .transition().duration(2000)
+				.attr('opacity', .7)
+				.attr('r', 4)
+        .attr('fill', function(d) {
+            if(i == 0) {
+                if(d.materialtype=="MAGAZINE") {
+                    return 'gray';
+                }
+                 return yearColors[d.publicationyear];
+            } else if (i == 1) {
+                colorScale = d3.scaleSequential(d3.interpolateCool);
+                max = d3.max(dataset, function(d){return +d.checkoutmonth;});
+                min = d3.min(dataset, function(d){return +d.checkoutmonth;});
+                normalizedValue = (+d.checkoutmonth - min) / (max - min);
+                return colorScale(normalizedValue);
+            } else if (i == 2){
+                if(d.usageclass == "Digital") {
+                    return 'white';
+                } else {
+                    return '#7777BB';
+                }
+            } else if (i == 3){
+                 return materialColors[d.materialtype];
+            }
 
-              })
-              .transition().duration(2000);
-
+        })
+        .transition().duration(2000);
 }
 
 var svgLegend = d3.select("svg");
@@ -476,7 +466,7 @@ function monthScale() {
     .attr("class", "legendMonth")
     .attr("transform", "translate(700,60)")
     .attr("fill", "white")
-    .style("fill-opacity", "0.5");
+    .style("fill-opacity", "0.7");
 
     var legendSequential = d3.legendColor()
     .shapeWidth(30)
@@ -501,7 +491,7 @@ function yearScale() {
     .attr("class", "legendYear")
     .attr("transform", "translate(700,60)")
     .attr("fill", "white")
-    .style("fill-opacity", "0.5");
+    .style("fill-opacity", "0.7");
 
     var legendLinear = d3.legendColor()
     .shapeWidth(30)
@@ -512,7 +502,6 @@ function yearScale() {
 
     svgLegend.select(".legendYear")
     .call(legendLinear);
-
 }
 
 function usageScale() {
@@ -527,7 +516,7 @@ function usageScale() {
     .attr("class", "legendUsage")
     .attr("transform", "translate(700,60)")
     .attr("fill", "white")
-    .style("fill-opacity", "0.5");;
+    .style("fill-opacity", "0.7");;
 
     var legendLinear = d3.legendColor()
     .shapeWidth(30)
@@ -555,7 +544,7 @@ function materialScale() {
     .attr("class", "legendMaterial")
     .attr("transform", "translate(700,60)")
     .attr("fill", "white")
-    .style("fill-opacity", "0.5");
+    .style("fill-opacity", "0.7");
 
     var legendOrdinal = d3.legendColor()
     .shapeWidth(30)
