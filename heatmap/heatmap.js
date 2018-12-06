@@ -4,10 +4,10 @@ var margin = {top:50, right:0, bottom:100, left:100},
 		gridSize=Math.floor(width/24), //35
 		legendElementWidth=gridSize*2.665, //93.275
 		buckets = 10,
-		colors = ["#f7fcf0","#e0f3db","#ccebc5","#a8ddb5","#7bccc4","#4eb3d3","#2b8cbe","#0868ac","#084081"],
+		colors = ["d3d3d3","#e0f3db","#ccebc5","#a8ddb5","#7bccc4","#4eb3d3","#2b8cbe","#0868ac","#084081"],
         days = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
 	   times = ["2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"];
-   
+
 
 	var heatmap;
 	var legend;
@@ -64,7 +64,7 @@ function updateHeatmap(newTitle){
             "$$app_token" : "gj5klMMMFIV45YA3S1Qkk8Ssd"
         }
         }).done(function(data) {
-       
+
         data.forEach(function(d) {
         d.checkoutmonth = +d.checkoutmonth;
         d.checkoutyear = +d.checkoutyear;
@@ -92,24 +92,24 @@ function updateHeatmap(newTitle){
 				.style("fill", colors[0])
                 .style("stroke", "white")
                 .style("stroke-opacity", 0.6);
-        
+
         heatMap.append("title");
 
 		heatMap.transition().duration(1000)
 			.style("fill", function(d){ return colorScale(d.checkouts);});
 
 		heatMap.selectAll("title").text(function(d) {return d.checkouts;});
-        
+
         svgHM.select(".chartTitle")
             .text('Frequency of Checkouts per Month/Year for ' + newTitle);
-        
+
         /*
        svgHM.append('text')
     	.attr('class', 'y-label')
         .attr('transform', 'translate(0, -30)')
         .style("fill", "white")
     	.text('Frequency of Checkouts per Month/Year for "' + newTitle +'"');*/
-        
+
 		var legend = svgHM.selectAll(".legend")
 				.data([0].concat(colorScale.quantiles()), function(d) {return d;})
 				.enter().append("g")
@@ -128,7 +128,7 @@ function updateHeatmap(newTitle){
 				.attr("x", function(d, i){ return 93.275 *i;})
 				.attr("y", height+ 35)
                 .style("fill", "white");
-        
+
 			heatMap.exit().remove();
 
 		}

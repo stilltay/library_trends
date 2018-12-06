@@ -58,10 +58,10 @@ function autocomplete(inp) {
           /*create a DIV element for each matching element:*/
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
-          b.innerHTML = "<div style=\"color: white;\"><strong>" + arr[i].substr(0, val.length) + "</strong>" + arr[i].substr(val.length); + "</div>";
+          b.innerHTML = "<div style=\"color: white; background-color: black;\"><strong>" + arr[i].substr(0, val.length) + "</strong>" + arr[i].substr(val.length); + "</div>";
           // b.innerHTML += "<div style =\"color:white;\">" + arr[i].substr(val.length); + "</div>"
           /*insert a input field that will hold the current array item's value:*/
-          b.innerHTML += "<div style=\"color: white;\"><input type='hidden' value='" + arr[i] + "'></div>";
+          b.innerHTML += "<div style=\"color: white; background-color: black;\"><input type='hidden' value='" + arr[i] + "'></div>";
           /*execute a function when someone clicks on the item value (DIV element):*/
               b.addEventListener("click", function(e) {
               /*insert the value for the autocomplete text field:*/

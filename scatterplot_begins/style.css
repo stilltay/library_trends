@@ -4,9 +4,32 @@
     stroke-width: 0.5;
     stroke-opacity: 0.6;
 }
+.flex-grid {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
 
+
+.col {
+  flex: 0, 0, 170;
+}
+.col2 {
+  flex: 0, 0, 250;
+}
+.col3 {
+  flex: 0, 0, 1020;
+}
+
+select {
+  /* General styling */
+  height: 40px;
+  width: 100px;
+  border-radius: 0;
+  padding-left: 10px;
+}
 body {
-    font-family: "Open Sans";
+    font-family: "Roboto";
     margin: 0;
     background-color: #000000;
 }
@@ -16,9 +39,11 @@ body {
 }
 
 #searchbar {
-  overflow-y:auto;
-  overflow-x:hidden;
+  position: absolute;
+  /* overflow-y:auto;
+  overflow-x:hidden; */
   height:800px;
+  /* background-color: black; */
 }
 
 #main {
