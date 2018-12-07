@@ -14,6 +14,10 @@ select {
   border-radius: 10px;
 }
 
+.checkoutInfo {
+  font-size: 20px;
+}
+
 body {
     font-family: 'Josefin Sans', sans-serif;
     margin: 0;
