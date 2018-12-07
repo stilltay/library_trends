@@ -1,27 +1,27 @@
 var svgT = d3.select("#tooltip")
     .append("svg")
-    .attr("width", 200)
+    .attr("width", 300)
     .attr("height", 800);
 
-var tx = 40; //title x variable
-var ty = 25; // title y variable
-var tpx = 70; // time period x variable
-var tpy = 85; // time period y variable
-var cx = 50; //creator x variable
-var cy = 105; // creator y variable
-var coix = 60; // checkouts x variable
-var coiy = 125; // checkouts y variable
-var mx = 73; // materialtype x variable
-var my = 145; // materialtype y variable
-var px = 60; // publisher x variable
-var py = 165; // publisher y variable
-var pyx = 80; // publisher year x variable
-var pyy = 185; // publisher year y variable
-var ux = 70; // usage class x variable
-var uy = 205; // usage class y variable
-var sx = 53; // subjects x variable
-var sy = 225; // subjects y variable
-var text2 = 310;
+var tx = 60; //title x variable
+var ty = 50; // title y variable
+var tpx = 125; // time period x variable
+var tpy = 110; // time period y variable
+var cx = 90; //creator x variable
+var cy = 135; // creator y variable
+var coix = 115; // checkouts x variable
+var coiy = 160; // checkouts y variable
+var mx = 145; // materialtype x variable
+var my = 185; // materialtype y variable
+var px = 115; // publisher x variable
+var py = 210; // publisher y variable
+var pyx = 175; // publisher year x variable
+var pyy = 260; // publisher year y variable 260
+var ux = 130; // usage class x variable
+var uy = 285; // usage class y variable 285
+var sx = 105; // subjects x variable
+var sy = 315; // subjects y variable 305
+var text2 = 400;
 var chart2start = 400;
 var keepGoing = false;
 var prevColor ='';
@@ -33,7 +33,7 @@ var months = {1: 'Jan.', 2: 'Feb.', 3: 'Mar.', 4: 'Apr.', 5: 'May', 6: 'June',
 svgT.append('text')
     .attr('class', 'checkoutInfo')
     .attr('x', 10)
-    .attr('y', 10)
+    .attr('y', 25)
     .style("fill", "#9f7be1")
     .text('Hovered Checkout');
 
@@ -192,7 +192,7 @@ function handleMouseOver(d, i) {
       .attr('id', tid)
       .style("fill", "#ffffff")
       .text(d.title)
-      .call(wrap, 150);
+      .call(wrap, 200);
 
   svgT.append('text')
       .attr('class', 'checkoutInfo')
@@ -201,7 +201,7 @@ function handleMouseOver(d, i) {
       .attr('id', tpid)
       .style("fill", "#ffffff")
       .text(months[d.checkoutmonth] + ' ' + refined_year)
-      .call(wrap, 150);
+      .call(wrap, 200);
 
   svgT.append('text')
       .attr('class', 'checkoutInfo')
@@ -233,7 +233,8 @@ function handleMouseOver(d, i) {
        .attr('y', py)
        .attr('id', pid)
        .style("fill", "#ffffff")
-       .text(d.publisher);
+       .text(d.publisher)
+       .call(wrap, 200);
 
    svgT.append('text')
         .attr('class', 'checkoutInfo')
@@ -258,13 +259,14 @@ function handleMouseOver(d, i) {
          .attr('id', sid)
          .style("fill", "#ffffff")
          .text(d.subjects)
-         .call(wrap, 150);
+         .call(wrap, 200);
 
    var hovered = d3.select(this);
    // add hovered class to style the group
    hovered.classed('hovered', true);
    prevColor = hovered.attr('fill');
-   hovered.attr('fill', 'white');
+   hovered.attr('fill', 'white')
+      .style('opacity', 1);
     // highlightSelection(d.title);
 }
 
@@ -282,7 +284,8 @@ function handleMouseOut(d, i) {
 
   var hovered = d3.select(this);
    hovered.classed('hovered', false);
-   hovered.attr('fill', prevColor);
+   hovered.attr('fill', prevColor)
+      .style('opacity', .7);
   // updateColorScale(getDataset(),getColorScaleIndex());
 }
 
@@ -308,7 +311,7 @@ function tooltipClickIn(d, i) {
       .attr('id', ctid)
       .style("fill", "#ffffff")
       .text(d.title)
-      .call(wrap, 150);
+      .call(wrap, 200);
 
   svgT.append('text')
       .attr('class', 'checkoutInfo')
@@ -348,7 +351,8 @@ function tooltipClickIn(d, i) {
        .attr('y', py + chart2start)
        .attr('id', cpid)
        .style("fill", "#ffffff")
-       .text(d.publisher);
+       .text(d.publisher)
+       .call(wrap, 200);
 
    svgT.append('text')
         .attr('class', 'checkoutInfo')
@@ -373,7 +377,7 @@ function tooltipClickIn(d, i) {
          .attr('id', csid)
          .style("fill", "#ffffff")
          .text(d.subjects)
-         .call(wrap, 150);
+         .call(wrap, 200);
 
 
 }
@@ -415,7 +419,7 @@ function wrap(text, width) {
                         .attr("y", y)
                         .attr("dy", dy + "em");
         while (word = words.pop()) {
-          if (lineNumber < 4 || keepGoing) {
+          if (lineNumber < 1) {
             line.push(word);
             tspan.text(line.join(" "));
             if (tspan.node().getComputedTextLength() > width) {

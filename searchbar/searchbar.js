@@ -1,17 +1,22 @@
 
 //code is copied from https://www.w3schools.com/howto/howto_js_autocomplete.asp
 var items = [];
+var theColors = [];
 d3.csv('../scatterplot_begins/library.csv', function(error, dataset) {
+  library = dataset;
   for (entry in dataset) {
     if (entry != "columns"){
       var creator = dataset[entry].creator;
       var title = dataset[entry].title;
       var publisher = dataset[entry].publisher;
       if (creator != "" && !items.includes(creator)) {
+        theColors.push(creatorhColor);
         items.push(creator);
       } else if (title != '' && !items.includes(title)) {
+        theColors.push(titlehColor);
         items.push(title);
       } else if (publisher != '' && !items.includes(publisher)) {
+        theColors.push(publisherhColor);
         items.push(publisher);
       }
       // if (title != "" && !creators.includes(title.slice(0,40))) {
@@ -56,12 +61,13 @@ function autocomplete(inp) {
         /*check if the item starts with the same letters as the text field value:*/
         if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
           /*create a DIV element for each matching element:*/
+          var newColor = theColors[i];
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
-          b.innerHTML = "<div style=\"color: white; background-color: black;\"><strong>" + arr[i].substr(0, val.length) + "</strong>" + arr[i].substr(val.length); + "</div>";
+          b.innerHTML = "<div style='border: none !important; padding-top: 2px; color: black; background-color:" + newColor + ";'><strong>" + arr[i].substr(0, val.length) + "</strong>" + arr[i].substr(val.length); + "</div>";
           // b.innerHTML += "<div style =\"color:white;\">" + arr[i].substr(val.length); + "</div>"
           /*insert a input field that will hold the current array item's value:*/
-          b.innerHTML += "<div style=\"color: white; background-color: black;\"><input type='hidden' value='" + arr[i] + "'></div>";
+          b.innerHTML += "<div style='border: none !important;padding-top: 2px; color: black; background-color:" + newColor + ";'><input type='hidden' value='" + arr[i] + "'></div>";
           /*execute a function when someone clicks on the item value (DIV element):*/
               b.addEventListener("click", function(e) {
               /*insert the value for the autocomplete text field:*/
@@ -124,7 +130,12 @@ function autocomplete(inp) {
       x[i].parentNode.removeChild(x[i]);
     }
     input1 = inp.value;
-    highlightSelection(inp.value);
+    if(inp.value == '') {
+      updateColorScale(library, 3);
+      emptyStringCount = 1;
+    } else {
+      highlightSelection(inp.value);
+    }
     console.log("This is hopefully the title I clicked on", inp.value);
   }
 
