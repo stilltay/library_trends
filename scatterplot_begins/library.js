@@ -59,7 +59,7 @@ d3.csv('./library.csv', function(error, dataset) {
 
   svg.append('text')
     	.attr('class', 'x-label')
-    	.attr('transform', 'translate(850, 790)')
+    	.attr('transform', 'translate(700, 770)')
       .style("fill", "white")
     	.text('Checkout Year');
 
@@ -271,14 +271,14 @@ function updateChart() {
 
           var simulation = d3.forceSimulation(library)
             .force("x", d3.forceX(function(d) {
-                    if(chartScales.x!="publicationyear" && chartScales.x!="checkoutyear ")
+                    if(chartScales.x!="publicationyear")
                       return xScale(d[chartScales.x]);
                     else
                       return xScale(parseTime(d[chartScales.x]));
                   }).strength(1)
             )
             .force("y", d3.forceY(function(d) {
-                    if(chartScales.y!="publicationyear" && chartScales.y!="checkoutyear ")
+                    if(chartScales.y!="publicationyear")
                       return yScale(d[chartScales.y]);
                     else
                       return yScale(parseTime(d[chartScales.y]));
@@ -321,7 +321,7 @@ function updateChart() {
             });
 
             titlesEnter.append('circle')
-              .attr('r', 4)
+              .attr('r', 6)
               .attr('fill', function(d) {
                 return materialColors[d.materialtype];
               })
