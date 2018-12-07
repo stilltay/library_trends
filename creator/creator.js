@@ -57,24 +57,24 @@ svgC.append('text')
 
 
 //////////////////////////////////////TOOLTIP////////////////////////////////////////
-var tx2 = 740; //title x variable
-var ty2 = 25; // title y variable
-var tpx2 = 770; // time period x variable
-var tpy2 = 135; // time period y variable
-var cx2 = 750; //creator x variable
-var cy2 = 155; // creator y variable
-var coix2 = 760; // checkouts x variable
-var coiy2 = 175; // checkouts y variable
-var mx2 = 773; // materialtype x variable
-var my2 = 195; // materialtype y variable
-var px2 = 760; // publisher x variable
-var py2 = 215; // publisher y variable
-var pyx2 = 780; // publisher year x variable
-var pyy2 = 235; // publisher year y variable
-var ux2 = 770; // usage class x variable
-var uy2 = 255; // usage class y variable
-var sx2 = 753; // subjects x variable
-var sy2 = 275; // subjects y variable
+var tx2 = 760; //title x variable
+var ty2 = 50; // title y variable
+var tpx2 = 825; // time period x variable
+var tpy2 = 110; // time period y variable
+var cx2 = 790; //creator x variable
+var cy2 = 135; // creator y variable
+var coix2 = 815; // checkouts x variable
+var coiy2 = 160; // checkouts y variable
+var mx2 = 845; // materialtype x variable
+var my2 = 185; // materialtype y variable
+var px2 = 815; // publisher x variable
+var py2 = 210; // publisher y variable
+var pyx2 = 875; // publisher year x variable
+var pyy2 = 260; // publisher year y variable
+var ux2 = 830; // usage class x variable
+var uy2 = 285; // usage class y variable
+var sx2 = 805; // subjects x variable
+var sy2 = 315; // subjects y variable
 var prevColor ='';
 
 var months2 = {1: 'Jan.', 2: 'Feb.', 3: 'Mar.', 4: 'Apr.', 5: 'May', 6: 'June',
@@ -84,7 +84,7 @@ var months2 = {1: 'Jan.', 2: 'Feb.', 3: 'Mar.', 4: 'Apr.', 5: 'May', 6: 'June',
 svgC.append('text')
     .attr('class', 'checkoutInfo')
     .attr('x', 710)
-    .attr('y', 10)
+    .attr('y', 25)
     .style("fill", "#9f7be1")
     .text('Checkout Information');
 
@@ -281,7 +281,7 @@ d3.csv('../scatterplot_begins/library.csv', function(error, dataset) {
             });
         })
         .entries(filteredData);
-    
+
     nestedFilteredDataforScale = d3.nest()
         .key(function(d) {
             return d.title;
@@ -313,10 +313,10 @@ d3.csv('../scatterplot_begins/library.csv', function(error, dataset) {
 
      console.log("newData");
         console.log(newData);
-    
+
     ///////////////////////////////////DATA////////////////////////////////////
 
-    
+
     //////////////////////////////////BARCHART/////////////////////////////////
     // **** Draw and Update your chart here ****
 
@@ -393,11 +393,11 @@ d3.csv('../scatterplot_begins/library.csv', function(error, dataset) {
         .attr('fill', 'white');
 
         bars.exit().remove();
-    
+
     //////////////////////////////////BARCHART///////////////////////////////////////
 
 });
-    
+
 
 }
 
@@ -531,14 +531,14 @@ function updateColorScale2(dataset, i) {
 
     console.log("i");
     console.log(i);
-    
+
     console.log(dataset);
 
   chartGC.selectAll('.bar')
         .select('rect')
         .attr('opacity', .7)
         .style('fill', function(d, k) {
-            if(i == 0) 
+            if(i == 0)
             {
                 console.log("dataset value publisher year", dataset[k].values[0].publicationyear);
                 if(dataset[k].values[0].materialtype=="MAGAZINE") {
