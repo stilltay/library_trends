@@ -45,7 +45,7 @@ var margin = {top:50, right:0, bottom:100, left:100},
     	.attr('class', 'chartTitle')
         .attr('transform', 'translate(0, -30)')
         .style("fill", "white")
-        .style("font-size", "18px")
+        .style("font-size", "16px")
     	.text('Frequency of Checkouts per Month/Year for <select item above>');
 
 
@@ -101,7 +101,7 @@ function updateHeatmap(newTitle){
 		heatMap.selectAll("title").text(function(d) {return d.checkouts;});
 
         svgHM.select(".chartTitle")
-            .text('Frequency of Checkouts per Month/Year for ' + newTitle);
+            .text('Frequency of Checkouts per Month/Year for ' + newTitle.substring(0, newTitle.indexOf("/")));
 
         /*
        svgHM.append('text')
@@ -116,16 +116,16 @@ function updateHeatmap(newTitle){
 				.attr("class", "legend");
 
 			legend.append("rect")
-				.attr("x", function(d, i){ return 93.275 * i;})
+				.attr("x", function(d, i){ return 60 * i;})
 				.attr("y", height)
-				.attr("width", 93.275)
+				.attr("width", 60)
 				.attr("height", 35/2)
 				.style("fill", function(d, i) {return colors[i]; });
 
 			legend.append("text")
 				.attr("class", "mono")
 				.text(function(d) {return "≥ "+d.toString().substr(0,4);})
-				.attr("x", function(d, i){ return 93.275 *i;})
+				.attr("x", function(d, i){ return 60 *i;})
 				.attr("y", height+ 35)
                 .style("fill", "white");
 
