@@ -1,6 +1,6 @@
 var margin = {top:50, right:0, bottom:100, left:100},
-		width=960-margin.left-margin.right,
-		height=630-margin.top-margin.bottom,
+		width=898-margin.left-margin.right,
+		height=658-margin.top-margin.bottom,
 		gridSize=Math.floor(width/24), //35
 		legendElementWidth=gridSize*2.665, //93.275
 		buckets = 10,

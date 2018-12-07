@@ -33,7 +33,7 @@ svgC.append('text')
   .attr('id', 'chartTitle')
   .attr('transform', 'translate(100, 20)')
   .style("fill", "white")
-  .style("font-size", "18px")
+  .style("font-size", "28px")
   .text('Top 10 Checkout Items for ');
 
 var xScale = d3.scaleLinear()
@@ -51,8 +51,8 @@ svgC.append('g')
 
 svgC.append('text')
     	.attr('class', 'x-label')
-    	.attr('transform', 'translate(325, 480)')
-        .style("fill", "white")
+    	.attr('transform', 'translate(325, 500)')
+      .style("fill", "white")
     	.text('Total Checkouts');
 
 
@@ -214,7 +214,7 @@ var nestedFilteredDataforScale;
   var bHeight= 40; //button height
   var bSpace= 20; //space between buttons
   var x0= 100; //x offset
-  var y0= 500; //y offset
+  var y0= 550; //y offset
 
   buttonGroups2.append("rect")
                       .attr("class","buttonRect")
@@ -245,7 +245,9 @@ var nestedFilteredDataforScale;
 function updateCreatorChart(type, name) {
 
     svgC.select('#chartTitle')
-    	.text('Top 10 Checkout Items for ' + name);
+    	.text('Top 10 Checkout Items for ' + name)
+      .style("font-size", "28px")
+      .attr("class", "titleText");
 
 
 d3.csv('../scatterplot_begins/library.csv', function(error, dataset) {
