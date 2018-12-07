@@ -1,8 +1,8 @@
 var svg = d3.select('svg');
-var svgWidth = +svg.attr('width') -60;
+var svgWidth = +svg.attr('width') -10;
 var svgHeight = +svg.attr('height');
 
-var padding = {t: 40, r: 40, b: 140, l: 70};
+var padding = {t: 40, r: 70, b: 110, l: 105};
 
 var svgTB = d3.select("#toolbar").append("svg")
 		.attr("width",650)
@@ -35,12 +35,12 @@ var colorScaleIndex = 0;
 //Axis Variable
 var yAxisG = svg.append('g')
                 .attr('class', 'y-axis')
-                .attr('transform', 'translate(70, 40)')
+                .attr('transform', 'translate(110, 50)')
                 .attr('stroke', 'white');
 
 var xAxisG = svg.append('g')
     .attr('class', 'x-axis')
-    .attr('transform', 'translate(70,720)')
+    .attr('transform', 'translate(100,740)')
     .attr('stroke', 'white');
 
 d3.csv('./library.csv', function(error, dataset) {
@@ -56,12 +56,14 @@ d3.csv('./library.csv', function(error, dataset) {
 
   svg.append('text')
     	.attr('class', 'x-label')
-    	.attr('transform', 'translate(850, 790)')
+      .attr('id','x-label')
+    	.attr('transform', 'translate(710, 800)')
       .style("fill", "white")
     	.text('Checkout Year');
 
   svg.append('text')
     	.attr('class', 'y-label')
+      .attr('id','y-label')
       .attr('transform', 'translate(20, 480) rotate(-90)')
       .style("fill", "white")
     	.text('Frequency of Checkouts/Month');
@@ -275,7 +277,7 @@ function updateChart() {
             .force("collide", d3.forceCollide(5))
             .stop();
 
-          for (var i = 0; i < 30; ++i)
+          for (var i = 0; i < 50; ++i)
             {
                 simulation.tick();
             }
@@ -309,11 +311,11 @@ function updateChart() {
             });
 
             titlesEnter.append('circle')
-              .attr('r', 4)
+              .attr('r', 6)
               .attr('fill', function(d) {
                 return materialColors[d.materialtype];
               })
-              .attr('fill-opacity', '0.7')
+              .attr('fill-opacity', '0.5')
               .on("mouseover", handleMouseOver)
               .on("mouseout", handleMouseOut)
               .on("click", handleMouseClick);
@@ -395,8 +397,6 @@ function updateColorScale(dataset, i) {
 
   chartG.selectAll('circle')
         .transition().duration(2000)
-				.attr('opacity', .7)
-				.attr('r', 4)
         .attr('fill', function(d) {
             if(i == 0) {
                 if(d.materialtype=="MAGAZINE") {
@@ -459,7 +459,7 @@ function monthScale() {
     .attr("class", "legendMonth")
     .attr("transform", "translate(100,45)")
     .attr("fill", "white")
-    .style("fill-opacity", "0.7");
+    .style("fill-opacity", "1");
 
     var legendSequential = d3.legendColor()
     .shapeWidth(30)
@@ -484,7 +484,7 @@ function yearScale() {
     .attr("class", "legendYear")
     .attr("transform", "translate(70,45)")
     .attr("fill", "white")
-    .style("fill-opacity", "0.7");
+    .style("fill-opacity", "1");
 
     var legendLinear = d3.legendColor()
     .shapeWidth(30)
@@ -507,9 +507,7 @@ function usageScale() {
 
     svgLegend.append("g")
     .attr("class", "legendUsage")
-    .attr("transform", "translate(245,45)")
-    .attr("fill", "white")
-    .style("fill-opacity", "0.7");;
+    .attr("transform", "translate(245,45)");
 
     var legendLinear = d3.legendColor()
     .shapeWidth(30)
@@ -535,9 +533,7 @@ function materialScale() {
 
     svgLegend.append("g")
     .attr("class", "legendMaterial")
-    .attr("transform", "translate(60,45)")
-    .attr("fill", "white")
-    .style("fill-opacity", "0.7");
+    .attr("transform", "translate(60,45)");
 
     var legendOrdinal = d3.legendColor()
     .shapeWidth(30)
@@ -553,6 +549,33 @@ function onYScaleChanged() {
     var select = d3.select('#yScaleSelect').node();
     // Get current value of select element, save to global chartScales
     chartScales.y = select.options[select.selectedIndex].value
+    //Updating AxisLabel
+    var newLabel
+    if(select.options[select.selectedIndex].value=="checkoutmonth")
+    {
+      newLabel = "Checkout Month";
+    }
+    else if(select.options[select.selectedIndex].value=="checkoutyear")
+    {
+      newLabel = "Checkout Year";
+    }
+    else if(select.options[select.selectedIndex].value=="usageclass")
+    {
+      newLabel = "Usage Class";
+    }
+    else if(select.options[select.selectedIndex].value=="checkouts")
+    {
+      newLabel = "Frequency of Checkouts/Month";
+    }
+    else if(select.options[select.selectedIndex].value=="publicationyear")
+    {
+      newLabel = "Publication Year";
+    }
+    else if(select.options[select.selectedIndex].value=="materialtype")
+    {
+      newLabel = "Material Type";
+    }
+    document.getElementById('y-label').textContent = newLabel;
     // Update chart
     updateChart();
 }
@@ -560,7 +583,34 @@ function onYScaleChanged() {
 function onXScaleChanged() {
     var select = d3.select('#xScaleSelect').node();
     // Get current value of select element, save to global chartScales
-    chartScales.x = select.options[select.selectedIndex].value
+    chartScales.x = select.options[select.selectedIndex].value;
+    //Updating AxisLabel
+    var newLabel
+    if(select.options[select.selectedIndex].value=="checkoutmonth")
+    {
+      newLabel = "Checkout Month";
+    }
+    else if(select.options[select.selectedIndex].value=="checkoutyear")
+    {
+      newLabel = "Checkout Year";
+    }
+    else if(select.options[select.selectedIndex].value=="usageclass")
+    {
+      newLabel = "Usage Class";
+    }
+    else if(select.options[select.selectedIndex].value=="checkouts")
+    {
+      newLabel = "Frequency of Checkouts/Month";
+    }
+    else if(select.options[select.selectedIndex].value=="publicationyear")
+    {
+      newLabel = "Publication Year";
+    }
+    else if(select.options[select.selectedIndex].value=="materialtype")
+    {
+      newLabel = "Material Type";
+    }
+    document.getElementById('x-label').textContent = newLabel;
     // Update chart
     updateChart();
 }
