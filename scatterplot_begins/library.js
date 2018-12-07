@@ -5,12 +5,12 @@ var svgHeight = +svg.attr('height');
 var padding = {t: 40, r: 40, b: 140, l: 70};
 
 var svgTB = d3.select("#toolbar").append("svg")
-		.attr("width", 1000)
-		.attr("height",100)
+		.attr("width",650)
+		.attr("height",120)
     .attr("class","svgTB")
 		.append("g")
-		.attr("transform", "translate("+ padding.l+","+ padding.t+")");
-
+		.attr("transform", "translate(40 ,"+ padding.t+")");
+var svgLegend = svgTB;
 var chartG = svg.append('g')
     .attr('transform', 'translate('+[padding.l, padding.t]+')');
 
@@ -34,9 +34,9 @@ var colorScaleIndex = 0;
 
 //Axis Variable
 var yAxisG = svg.append('g')
-      .attr('class', 'y-axis')
-      .attr('transform', 'translate(70, 40)')
-      .attr('stroke', 'white');
+                .attr('class', 'y-axis')
+                .attr('transform', 'translate(70, 40)')
+                .attr('stroke', 'white');
 
 var xAxisG = svg.append('g')
     .attr('class', 'x-axis')
@@ -52,33 +52,30 @@ d3.csv('./library.csv', function(error, dataset) {
   library.forEach(function(d) {
     d.checkoutyear = parseTime(d.checkoutyear);
     d.checkouts = +d.checkouts;
-    //d.publicationyear = parseTime(d.publicationyear);
   });
 
   svg.append('text')
     	.attr('class', 'x-label')
     	.attr('transform', 'translate(850, 790)')
-        .style("fill", "white")
+      .style("fill", "white")
     	.text('Checkout Year');
 
   svg.append('text')
     	.attr('class', 'y-label')
-        .attr('transform', 'translate(20, 480) rotate(-90)')
-        .style("fill", "white")
+      .attr('transform', 'translate(20, 480) rotate(-90)')
+      .style("fill", "white")
     	.text('Frequency of Checkouts/Month');
-
-
 
   //container for all buttons
   var allButtons= svgTB.append("g")
                         .attr("id","allButtons");
 
   //labels for buttons
-  var labels= ["Publication Year","Checkout Month","Usage Class", "Material Type"];
+  var labels= ["Publication Year","Checkout Month","Usage Class", "Material Type", "Checkout Year"];
 
-  var defaultColor= "#7777BB";
-  var hoverColor= "#0000ff";
-  var pressedColor= "#000077";
+  defaultColor= "#7777BB";
+  hoverColor= "#0000ff";
+  pressedColor= "#000077";
 
   var min;
   var max;
@@ -110,19 +107,11 @@ d3.csv('./library.csv', function(error, dataset) {
               }
           })
 
-  function updateButtonColors(button, parent) {
-              parent.selectAll("rect")
-                      .attr("fill",defaultColor);
-
-              button.select("rect")
-                      .attr("fill",pressedColor);
-  }
-
   var bWidth= 100; //button width
   var bHeight= 40; //button height
   var bSpace= 20; //space between buttons
   var x0= 0; //x offset
-  var y0= 22; //y offset
+  var y0= -20; //y offset
 
   buttonGroups.append("rect")
                       .attr("class","buttonRect")
@@ -264,11 +253,9 @@ function updateChart() {
           yAxisG.transition()
             .duration(800)
             .call(d3.axisLeft(yScale));
-
           xAxisG.transition()
             .duration(800)
             .call(d3.axisBottom(xScale));
-
 
           var simulation = d3.forceSimulation(library)
             .force("x", d3.forceX(function(d) {
@@ -348,6 +335,14 @@ function updateChart() {
 
 }
 
+function updateButtonColors(button, parent) {
+              parent.selectAll("rect")
+                      .attr("fill",defaultColor);
+
+              button.select("rect")
+                      .attr("fill",pressedColor);
+  }
+
 function handleMouseClick(d, i) {
   
    updateHeatmap(d.title); 
@@ -387,10 +382,10 @@ function handleMouseClick(d, i) {
         return handleClickOut(d, i, d, i);
       }
     }
-
 }
 
 function updateColorScale(dataset, i) {
+  
   var colorScale;
   var normalizedValue;
   var min;
@@ -428,8 +423,6 @@ function updateColorScale(dataset, i) {
         .transition().duration(2000);
 }
 
-var svgLegend = d3.select("svg");
-
 function updateLegendScale(dataset, i) {
 
     if(i == 0){
@@ -464,7 +457,7 @@ function monthScale() {
 
     svgLegend.append("g")
     .attr("class", "legendMonth")
-    .attr("transform", "translate(700,60)")
+    .attr("transform", "translate(100,45)")
     .attr("fill", "white")
     .style("fill-opacity", "0.7");
 
@@ -489,7 +482,7 @@ function yearScale() {
 
     svgLegend.append("g")
     .attr("class", "legendYear")
-    .attr("transform", "translate(700,60)")
+    .attr("transform", "translate(70,45)")
     .attr("fill", "white")
     .style("fill-opacity", "0.7");
 
@@ -514,7 +507,7 @@ function usageScale() {
 
     svgLegend.append("g")
     .attr("class", "legendUsage")
-    .attr("transform", "translate(700,60)")
+    .attr("transform", "translate(245,45)")
     .attr("fill", "white")
     .style("fill-opacity", "0.7");;
 
@@ -542,7 +535,7 @@ function materialScale() {
 
     svgLegend.append("g")
     .attr("class", "legendMaterial")
-    .attr("transform", "translate(700,60)")
+    .attr("transform", "translate(60,45)")
     .attr("fill", "white")
     .style("fill-opacity", "0.7");
 

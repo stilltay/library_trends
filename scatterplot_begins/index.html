@@ -5,45 +5,68 @@
     <title>Library Checkouts 2005-2018</title>
     <link rel="stylesheet" href="./style.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,600,600i,700" rel="stylesheet">
 </head>
 <body>
 	<br><br>
-    <div id="main">
-    <div width:"2180" style="color: #ffffff; font-size: 24px; text-align:center;">Library Checkouts of Most Popular Books</div>
-      <div class="flex-grid">
-        <div class="col2"><select class="custom-select small" id="yScaleSelect" onchange="onYScaleChanged()" width="734">
-          <option value="publicationyear">publication year</option>
-          <option value="checkoutmonth">checkout month</option>
-          <option value="usageclass">usage class</option>
-          <option selected value="checkouts">checkouts</option>
-          <option value="materialtype">material type</option>
-          <option value="checkoutyear">checkout year</option>
-        </select>
-        <select class="custom-select small" id="xScaleSelect" onchange="onXScaleChanged()">
-          <option value="publicationyear">publication year</option>
-          <option value="checkoutmonth">checkout month</option>
-          <option value="usageclass">usage class</option>
-          <option value="checkouts">checkouts</option>
-          <option value="materialtype">material type</option>
-          <option selected value="checkoutyear">checkout year</option>
-        </select></div>
-        <div id="toolbar" class="col3" width="1000" height="100"></div>
-      </div>
-      <div class="flex-grid">
-        <form class="col1" id = "searchbar" autocomplete="off" action="/action_page.php" width="166px">
-           <div class="autocomplete" style="width:166px">
-             <input id="myInput" type="text" name="searchbar" placeholder="Search...">
-           </div>
-         </form>
-        <div id="scatterplot" class="col4">
-          <svg width="1440" height="800"></svg></div>
-        <div id = "tooltip" width="200" height="400" class="col5"></div> -->
-      </div>
-      <div class="flex-grid">
+
+    <div class= "heading "width="1920">Library Checkouts of Most Popular Books</div>
+      
+          <div class="col2">
+              
+              
+              X-Axis
+              <select class="custom-select small" id="xScaleSelect" onchange="onXScaleChanged()">
+                <option value="publicationyear">publication year</option>
+                <option value="checkoutmonth">checkout month</option>
+                <option value="usageclass">usage class</option>
+                <option value="checkouts">checkouts</option>
+                <option value="materialtype">material type</option>
+                <option selected value="checkoutyear">checkout year</option>
+              </select>
+              &nbsp;&nbsp;&nbsp;
+              Y-Axis
+              <select class="custom-select small" id="yScaleSelect" onchange="onYScaleChanged()" width="734">
+                <option value="publicationyear">publication year</option>
+                <option value="checkoutmonth">checkout month</option>
+                <option value="usageclass">usage class</option>
+                <option selected value="checkouts">checkouts</option>
+                <option value="materialtype">material type</option>
+                <option value="checkoutyear">checkout year</option>
+              </select>
+
+          </div>
+
+          <div id="toolbar" class="col3" width="800" height="100">
+            
+
+          </div>
+      
+            
+            <div class="autocomplete">
+            <form class="col1" id = "searchbar" autocomplete="off" action="/action_page.php" width="166px">
+               
+               
+                 
+                 <input id="myInput" type="text" name="searchbar" placeholder="Search...">
+               
+              
+
+            </form>
+             </div>
+            <div id="scatterplot" class="col4">
+              
+              <svg width="1440" height="800">
+                
+              </svg>
+            
+            </div>
+            <div class="col5" id = "tooltip" width="200" height="400" >
+              
+            </div>
+
         <div id="heatmap" class="col"></div>
         <div id="creator" class="col"></div>
-      </div>
-    </div>
 
 </body>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
